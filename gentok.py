@@ -181,3 +181,22 @@ def gentok_op_ternary(cmp: dict, true: dict, false: dict) -> _tgen:
     yield from gentok_from_expression(**cmp)
     yield from gentok_from_expression(**true)
     yield from gentok_from_expression(**false)
+
+# Procedures
+def gentok_proc_decls(type: bytes, name: bytes, args: _cabc.Sequence[dict], body: dict) -> _tgen:
+    yield _Token.PROC_DECLS
+    yield from gentok_from_identifier(type)
+    yield from gentok_from_identifier(name)
+    yield from gentok_from_proc_argdecs(*args)
+    raise NotImplementedError('body:block')
+def gentok_proc_decle(**kwargs): raise NotImplementedError
+
+def gentok_from_proc_argdecs(*args: dict) -> _tgen:
+    for a in args: yield from gentok_proc_argdec(**a)
+def gentok_proc_argdec(name: bytes, type: bytes, default: dict | bytes) -> _tgen:
+    yield _Token.PROC_ARGDEC
+    yield from gentok_from_identifier(name)
+    if type: yield from gentok_from_identifier(type)
+    else: yield None
+    if default: yield from gentok_from_expression(default)
+    else: yield None

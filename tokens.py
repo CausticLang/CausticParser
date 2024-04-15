@@ -19,8 +19,8 @@ class Token(IntEnum):
     def __str__(self) -> str:
         return f'0x{self.value:0{TOKEN_WIDTH*2}X} <{self.name}>'
 
-    EOF = 2**(8*TOKEN_WIDTH)-1 # 0xFF
-    NOP = 0x01
+    EOF         = 2**(8*TOKEN_WIDTH)-1 # 0xFF
+    NOP         = 0x01
 
     # Atoms - 0x11-0x1F
     IDENTIFIER  = 0x11
@@ -58,5 +58,11 @@ class Token(IntEnum):
     OP_RSHIFT   = 0x36
     ## Ternary
     OP_TERNARY  = 0x4A
+
+    # Procedures - 0x51-0x59
+    PROC_DECLS  = 0x51 # procedure declaration statement
+    PROC_DECLE  = 0x52 # procedure declaration expression
+    PROC_ARGDEC = 0x53 # prodecure argument declaration
+    PROC_INVOKE = 0x54
 
 assert not any(t > Token.EOF for t in Token)
