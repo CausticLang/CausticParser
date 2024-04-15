@@ -17,11 +17,25 @@ type _tgen = _cabc.Generator[_Token | _typing.Any, None, None]
 def gentok_eof() -> _tgen: yield _Token.EOF
 def gentok_nop() -> _tgen: yield _Token.NOP
 
+def gentok_block(*parts: dict) -> _tgen:
+    yield _Token.BLOCK_OUTER
+    for p in parts:
+        yield _Token.BLOCK_INNER
+        match p['type']:
+            case b'expr': yield from gentok_from_expression(**p['val'])
+            case b'stmt': yield from gentok_from_statement(**p['val'])
+            case _: raise TypeError(f'Unknown block type: {type!r}')
+
 def gentok_from_expression(type: _typing.Literal[b'atom', b'operator'], val: _typing.Any) -> _tgen:
     match type:
         case b'atom': yield from gentok_from_atom(**val)
         case b'operator': yield from gentok_from_operator(**val)
         case _: raise TypeError(f'Unknown expression type: {type!r}')
+
+def gentok_from_statement(type: _typing.Literal[b'procdecl'], val: _typing.Any) -> _tgen:
+    match type:
+        case b'procdecl': yield from gentok_proc_decls(**val)
+        case _: raise TypeError(f'Unknown statement type: {type!r}')
 
 # Atoms
 def gentok_from_atom(type: _typing.Literal[b'literal', b'identifier'], val: _typing.Any) -> _tgen:

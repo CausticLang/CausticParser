@@ -22,6 +22,9 @@ class Token(IntEnum):
     EOF         = 2**(8*TOKEN_WIDTH)-1 # 0xFF
     NOP         = 0x01
 
+    BLOCK_OUTER = 0x02
+    BLOCK_INNER = 0x03
+
     # Atoms - 0x11-0x1F
     IDENTIFIER  = 0x11
     LITERAL_INT = 0x12
