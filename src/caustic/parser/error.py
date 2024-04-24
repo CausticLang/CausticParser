@@ -22,23 +22,56 @@ def format_recognizer(r: parglare.grammar.Recognizer) -> str:
         case _:
             return repr(r)
 
-def iformat_exc(e: parglare.ParseError, *,
-                verbose_got: bool = True) -> cabc.Generator[str, None, None]:
+def format_pre_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
+    yield f'{(l.line-2):0{llen}} {lines[l.line-2]}\n'
+def format_post_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
+    yield f'\n{(l.line_end-1):0{llen}} {lines[l.line_end-1]}'
+def format_inner_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
+    if l.line == l.line_end:
+        yield f'{l.line:0{llen}} {lines[l.line-1]}\n'
+        yield f'{" "*llen} {" "*(l.column)}^'
+        if l.column != l.column_end:
+            yield f'{"~"*(l.column_end-l.column)}^'
+        return
+    yield f'{" "*llen} {" "*(l.column-1)}v\n'
+    for ln in range(l.line, l.line_end):
+        yield f'{ln:0{llen}} {lines[ln-1]}\n'
+    yield f'{" "*llen} {" "*(l.column_end-1)}^'
+
+def format_context(l: parglare.common.Location,
+                   precontext: bool = True, postcontext: bool = True) -> cabc.Generator[str, None, None]:
+    lines = l.input_str.split('\n')
+    llen = len(str(l.line_end))
+    if precontext and (l.line > 1):
+        yield from format_pre_context(l, lines, llen)
+    yield from format_inner_context(l, lines, llen)
+    if postcontext and (l.line_end < len(lines)):
+        yield from format_post_context(l, lines, llen)
+    
+
+def iformat_exc(e: parglare.ParseError, *, verbose_got: bool = False,
+                precontext: bool = True, postcontext: bool = True) -> cabc.Generator[str, None, None]:
     '''
         Formats a parsing error
 
         If `verbose_got` is true, then not only will the next token's value
             be printed, but additionally all of the names of the symbols
             that match it will be printed as well
+        If `precontext`/`postcontext` are true, then the line before/after the line(s) of
+            the error will be embedded as well
     '''
     yield (f'Parse error occured at '
            f'{e.location.file_name or "<unknown>"}'
-           f':{e.location.line}:{e.location.column}')
+           f':{e.location.line}:{e.location.column}\n')
 
-    yield '\nExpected: '
+    yield f'{"-"*40}\n'
+    yield from format_context(e.location, precontext, postcontext)
+    yield f'\n{"-"*40}'
+
+    yield '\nExpected:'
     if e.symbols_expected:
         for t in e.symbols_expected:
-            yield f'\n{t.name} -> {format_recognizer(t.recognizer)}'
+            yield f'\n {t.name} -> {format_recognizer(t.recognizer)}'
     else: yield ' <EOF>'
 
     yield '\nGot: '
@@ -48,7 +81,7 @@ def iformat_exc(e: parglare.ParseError, *,
             for t in e.tokens_ahead:
                 yield f'\n- AKA: {t.symbol.name}'
     else:
-        yield ' <EOF>'
+        yield '<EOF>'
 
 
 def format_exc(e: parglare.ParseError, **kwargs) -> str:
