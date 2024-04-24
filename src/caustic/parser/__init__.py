@@ -9,7 +9,7 @@ from pathlib import Path
 from collections import abc as cabc
 #</Imports
 
-__all__ = ('CausticParser', 'SourceInfo', 'error')
+__all__ = ('CausticParser', 'SourceInfo', 'error', 'cli')
 
 #> Package
 from . import error

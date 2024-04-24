@@ -6,7 +6,12 @@ meant to work with [CausticGrammar](https://codeberg.org/Caustic/CausticGrammar)
 to create a [CST (Caustic AST)](https://codeberg.org/Caustic/CausticAST)
 
 
-# Example usage
+# CLI usage
+
+See `cap --help`
+
+
+# Example module usage
 
 ```python3
 import sys
