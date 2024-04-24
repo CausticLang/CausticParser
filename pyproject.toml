@@ -1,0 +1,30 @@
+[project]
+name = "caustic.parser"
+version = "1.0.0"
+dependencies = []
+requires-python = ">=3.9"
+authors = [{name="Shae.c32"}]
+maintainers = []
+description = "Caustic's parsing framework"
+readme = "README.md"
+keywords = ['caustic', 'language', 'parser', 'syntax', 'grammar']
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Programming Language :: Other",
+    "Topic :: File Formats",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Compilers",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Interpreters",
+]
+
+[project.urls]
+Homepage = "https://codeberg.org/Caustic/CausticParser"
+Issues = "https://codeberg.org/Caustic/CausticParser/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
