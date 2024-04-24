@@ -1,4 +1,5 @@
-Compiles parsed Caustic grammar into tokens
+Caustic's Parser -- uses grammar specification to compile Caustic source code
+into a [CST (Caustic AST)](https://codeberg.org/Caustic/CausticAST)
 
 Uses [ParGlare](https://github.com/igordejanovic/parglare) for parsing,
 meant to work with [CausticGrammar](https://codeberg.org/Caustic/CausticGrammar)
