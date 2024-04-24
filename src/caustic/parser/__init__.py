@@ -10,9 +10,14 @@ from pathlib import Path
 from collections import abc as cabc
 #</Imports
 
-#> Header >/
-__all__ = ('CausticParser', 'SourceInfo')
+__all__ = ('CausticParser', 'SourceInfo', 'error')
 
+
+#> Package
+from . import error
+#</Package
+
+#> Header >/
 class SourceInfo(typing.NamedTuple):
     filename: str | None
     start_pos: int
