@@ -57,13 +57,3 @@ class CausticParser:
     def parse(self, data: str, **kwargs) -> typing.Any:
         '''...'''
         return self.parser.parse(data, **kwargs)
-
-
-# test
-def test():
-    import sys
-    sys.modules['caustic.parser'] = sys.modules[__name__]
-    try:
-        return CausticParser.from_file(Path('../CausticGrammar/default.pg'))
-    except Exception as e:
-        return e
