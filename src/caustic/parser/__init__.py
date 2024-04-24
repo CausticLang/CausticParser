@@ -12,13 +12,14 @@ from collections import abc as cabc
 
 __all__ = ('CausticParser', 'SourceInfo', 'error')
 
-
 #> Package
 from . import error
 #</Package
 
 #> Header >/
 class SourceInfo(typing.NamedTuple):
+    '''Represents the source that a CST node came from'''
+
     filename: str | None
     start_pos: int
     start_line: int
@@ -29,6 +30,7 @@ class SourceInfo(typing.NamedTuple):
 
     @classmethod
     def from_ctx(cls, ctx: object) -> typing.Self:
+        '''Generates a `SourceInfo` from a ParGlare context'''
         sl,sc = parglare.pos_to_line_col(ctx.input_str, ctx.start_position)
         el,ec = parglare.pos_to_line_col(ctx.input_str, ctx.end_position)
         return cls(filename=ctx.file_name,
@@ -55,5 +57,5 @@ class CausticParser:
         return cls.from_grammar(parglare.Grammar.from_file(f), **kwargs)
 
     def parse(self, data: str, **kwargs) -> typing.Any:
-        '''...'''
+        '''Parses some string data (passes it to the underlying `parser.parse()`)'''
         return self.parser.parse(data, **kwargs)
