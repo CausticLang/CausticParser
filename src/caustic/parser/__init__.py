@@ -36,6 +36,13 @@ class SourceInfo(typing.NamedTuple):
                    start_pos=ctx.start_position, start_line=sl, start_col=sc,
                    end_pos=ctx.end_position, end_line=el, end_col=ec)
 
+    def __repr__(self) -> str:
+        return f'{type(self).__name__}({self!s})'
+    def __str__(self) -> str:
+        return (f'{self.filename or "<unknown>"}:'
+                f'{self.start_line},{self.start_col}'
+                f'-{self.end_line},{self.end_col}')
+
 class CausticParser:
     '''Parses Caustic source code into a CST'''
     __slots__ = ('parser',)
