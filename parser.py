@@ -8,8 +8,6 @@ import parglare
 from caustic import cst
 from pathlib import Path
 from collections import abc as cabc
-
-from loader import load as metaload
 #</Imports
 
 #> Header >/
