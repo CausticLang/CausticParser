@@ -7,6 +7,7 @@ import sys
 import click
 import typing
 from pathlib import Path
+from parglare import Parser, GLRParser
 from parglare.exceptions import ParseError
 
 from . import CausticParser, SourceInfo
@@ -53,39 +54,55 @@ def cst_to_pretty(top: 'CausticASTNode') -> bytes:
 @click.command('Caustic Parser')
 @click.argument('source', type=click.Path('r', dir_okay=False, allow_dash=True, path_type=Path), default='-')
 @click.option('-g', '--grammar', type=click.Path(exists=True, dir_okay=False, path_type=Path), help='Alternative grammar file', default=None)
+@click.option('--glr', help='Use a GLR parser instead', is_flag=True, default=False)
 @click.option('-o', '--output', type=click.File('wb'), help='Where to write the output (defaults to a filename depending on the SOURCE and format, use "-" for STDOUT)', default=None)
-@click.option('-f', '--format', type=click.Choice(('pickle', 'json', 'json-pretty', 'pretty')), help='What format to write as', default='pickle')
+@click.option('-f', '--format', type=click.Choice(('pickle', 'json', 'json-pretty', 'pretty', 'tree')), help='What format to write as', default='pickle')
 @click.option('-q', '--quiet', help='Don\'t output status messages unless a failure occurs', is_flag=True, default=False)
-def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, format: typing.Literal['pickle', 'json', 'json-pretty'], quiet: bool) -> None:
+def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, format: typing.Literal['pickle', 'json', 'json-pretty'], quiet: bool, glr: bool) -> None:
     '''
         Parses a Caustic source file into a CST for compiling
 
         SOURCE is the file to compile (defaults to STDIN)
 
-        Note that, for `--format`s, "pickle" is the only format that can be used by the (default) compiler
+        Note that the "pickle" format is the only format that can be used by the (default) compiler
             "pretty" is recommended for viewing (without post-processing)
+        Note that the "tree" format will force the LR (the default parser if --glr is not set) parser to generate a tree
     '''
+    error = lambda *a,**kw: click.echo(click.style(*a), (255, 63, 63), color=True, file=sys.stderr, **kw)
     debug = (lambda *a,**kw: click.echo(*a, file=sys.stderr, **kw)) if quiet else (lambda *a,**kw: None)
     real_source = str(source) != '-'
+    tree_fmt = format == 'tree'
     # Load grammar
     if grammar is None:
         grammar = default_grammar()
         debug(f'Default grammar discovered at {grammar}')
     debug(f'Loading grammar and constructing parser from {grammar}')
-    parser = CausticParser.from_file(grammar)
+    parser = CausticParser.from_file(grammar, parser_type=(GLRParser if glr else Parser), build_tree=(tree_fmt or glr))
     # Parse data
     try:
         parsed = (parser.parser.parse_file(source) if real_source
                   else parser.parse(sys.stdin.read(), file_name=None))
     except ParseError as e:
-        click.echo(click.style(format_exc(e), (255, 63, 63)), color=True, file=sys.stderr)
+        error(format_exc(e))
         sys.exit(1)
+    # Handle GLR
+    if glr:
+        if parsed.ambiguities:
+            error(f'Post- GLR parse failure: ambiguous parse ({parsed.ambiguities} ambiguit(y/ies))')
+            sys.exit(1)
+        if parsed.solutions > 1:
+            error(f'Post- GLR parse failure: multiple solutions ({parsed.solutions} solutions)')
+            sys.exit(1)
+        parsed = parsed.get_first_tree()
+        if not tree_fmt:
+            parsed = parser.parser.call_actions(parsed)
     # Encode data
     match format:
         case 'pickle': data = cst_to_pickle(parsed)
         case 'json': data = cst_to_short_json(parsed)
         case 'json-pretty': data = cst_to_pretty_json(parsed)
         case 'pretty': data = cst_to_pretty(parsed)
+        case 'tree': data = parsed.to_str().encode() + b'\n'
         case _: raise ValueError(f'Unknown format: {format!r}')
     # Output
     if output is None:
