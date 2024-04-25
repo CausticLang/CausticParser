@@ -56,10 +56,10 @@ def cst_to_pretty(top: 'CausticASTNode') -> bytes:
 @click.option('-g', '--grammar', type=click.Path(exists=True, dir_okay=False, path_type=Path), help='Alternative grammar file', default=None)
 @click.option('--glr', help='Use a GLR parser instead', is_flag=True, default=False)
 @click.option('-o', '--output', type=click.File('wb'), help='Where to write the output (defaults to a filename depending on the SOURCE and format, use "-" for STDOUT)', default=None)
-@click.option('-f', '--format', type=click.Choice(('pickle', 'json', 'json-pretty', 'pretty', 'tree')), help='What format to write as', default='pickle')
+@click.option('-f', '--format', type=click.Choice(('pickle', 'json', 'json-pretty', 'pretty', 'tree', 'multitree')), help='What format to write as', default='pickle')
 @click.option('-q', '--quiet', help='Don\'t output status messages unless a failure occurs', is_flag=True, default=False)
 @click.option('--debug', help='Put the parser in "debug" mode (see ParGlare docs)', is_flag=True, default=False)
-def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, format: typing.Literal['pickle', 'json', 'json-pretty'],
+def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, format: typing.Literal['pickle', 'json', 'json-pretty', 'pretty', 'tree', 'multitree'],
         quiet: bool, glr: bool, debug: bool) -> None:
     '''
         Parses a Caustic source file into a CST for compiling
@@ -73,7 +73,7 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
     error = lambda *a,**kw: click.echo(click.style(*a, (255, 63, 63)), color=True, file=sys.stderr, **kw)
     debug_ = (lambda *a,**kw: None) if quiet else (lambda *a,**kw: click.echo(*a, file=sys.stderr, **kw))
     real_source = str(source) != '-'
-    tree_fmt = format == 'tree'
+    tree_fmt = format.startswith('tree')
     # Load grammar
     if grammar is None:
         grammar = default_grammar()
@@ -89,15 +89,16 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
         sys.exit(1)
     # Handle GLR
     if glr:
-        if parsed.ambiguities:
-            error(f'Post- GLR parse failure: ambiguous parse ({parsed.ambiguities} ambiguit(y/ies))')
-            sys.exit(1)
-        if parsed.solutions > 1:
-            error(f'Post- GLR parse failure: multiple solutions ({parsed.solutions} solutions)')
-            sys.exit(1)
-        parsed = parsed.get_first_tree()
-        if not tree_fmt:
-            parsed = parser.parser.call_actions(parsed)
+        if format != 'multitree':
+            if parsed.ambiguities:
+                error(f'Post- GLR parse failure: ambiguous parse ({parsed.ambiguities} ambiguit(y/ies))')
+                sys.exit(1)
+            if parsed.solutions > 1:
+                error(f'Post- GLR parse failure: multiple solutions ({parsed.solutions} solutions)')
+                sys.exit(1)
+            parsed = parsed.get_first_tree()
+            if not tree_fmt:
+                parsed = parser.parser.call_actions(parsed)
     # Encode data
     match format:
         case 'pickle':
@@ -112,7 +113,7 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
         case 'pretty':
             data = cst_to_pretty(parsed)
             suff = 'pretty.txt'
-        case 'tree':
+        case 'tree' | 'multitree':
             data = parsed.to_str().encode() + b'\n'
             suff = 'tree.txt'
         case _: raise ValueError(f'Unknown format: {format!r}')
