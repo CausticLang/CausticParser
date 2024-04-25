@@ -22,31 +22,33 @@ def format_recognizer(r: parglare.grammar.Recognizer) -> str:
         case _:
             return repr(r)
 
-def format_pre_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
-    yield f'{(l.line-1):0{llen}} {lines[l.line-2]}\n'
-def format_post_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
-    yield f'\n{(l.line_end+1):0{llen}} {lines[l.line_end]}'
-def format_inner_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
-    if l.line == l.line_end:
-        yield f'{l.line:0{llen}} {lines[l.line-1]}\n'
-        yield f'{" "*llen} {" "*(l.column)}^'
-        if l.column != l.column_end:
-            yield f'{"~"*(l.column_end-l.column-1)}^'
+def format_pre_context(l: parglare.common.Location, l_start: int, l_end: int, c_start: int, c_end: int, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
+    yield f'{(l_start-1):0{llen}} {lines[l_start-2]}\n'
+def format_post_context(l: parglare.common.Location, l_start: int, l_end: int, c_start: int, c_end: int, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
+    yield f'\n{(l_end+1):0{llen}} {lines[l_end]}'
+def format_inner_context(l: parglare.common.Location, l_start: int, l_end: int, c_start: int, c_end: int, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
+    if (l_start == l_end) or (l_end is None):
+        yield f'{l_start:0{llen}} {lines[l_start-1]}\n'
+        yield f'{" "*llen} {" "*(c_start)}^'
+        if c_start != c_end:
+            yield f'{"~"*(c_end-c_start-1)}^'
         return
-    yield f'{" "*llen} {" "*(l.column-1)}v\n'
-    for ln in range(l.line, l.line_end+1):
+    yield f'{" "*llen} {" "*(c_start-1)}v\n'
+    for ln in range(l_start, l_end+1):
         yield f'{ln:0{llen}} {lines[ln-1]}\n'
-    yield f'{" "*llen} {" "*(l.column_end)}^'
+    yield f'{" "*llen} {" "*(c_end)}^'
 
 def format_context(l: parglare.common.Location,
                    precontext: bool = True, postcontext: bool = True) -> cabc.Generator[str, None, None]:
     lines = l.input_str.split('\n')
-    llen = len(str(l.line_end))
-    if precontext and (l.line > 1):
-        yield from format_pre_context(l, lines, llen)
-    yield from format_inner_context(l, lines, llen)
-    if postcontext and (l.line_end+1 < len(lines)):
-        yield from format_post_context(l, lines, llen)
+    l_start = l.line; l_end = l_start if l.line_end is None else l.line_end
+    c_start = l.column; c_end = c_start if l.column_end is None else l.column_end
+    llen = len(str(l_end))
+    if precontext and (l_start > 1):
+        yield from format_pre_context(l, l_start, l_end, c_start, c_end, lines, llen)
+    yield from format_inner_context(l, l_start, l_end, c_start, c_end, lines, llen)
+    if postcontext and (l_end+1 < len(lines)):
+        yield from format_post_context(l, l_start, l_end, c_start, c_end, lines, llen)
     
 
 def iformat_exc(e: parglare.ParseError, *, verbose_got: bool = False,
