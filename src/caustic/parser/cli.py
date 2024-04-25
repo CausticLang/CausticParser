@@ -116,7 +116,7 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
         case _: raise ValueError(f'Unknown format: {format!r}')
     # Output
     if output is None:
-        output = click.open_file((f'{source}.cst.{suff}' if real_source else '-'), 'wb')
+        output = click.open_file((source.with_suffix(f'.cst.{suff}') if real_source else '-'), 'wb')
     debug(f'Wrote {output.write(data)} byte(s) to {output.name}')
 #</Header
 
