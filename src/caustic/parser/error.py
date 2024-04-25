@@ -23,20 +23,20 @@ def format_recognizer(r: parglare.grammar.Recognizer) -> str:
             return repr(r)
 
 def format_pre_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
-    yield f'{(l.line-2):0{llen}} {lines[l.line-2]}\n'
+    yield f'{(l.line-1):0{llen}} {lines[l.line-2]}\n'
 def format_post_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
-    yield f'\n{(l.line_end-1):0{llen}} {lines[l.line_end-1]}'
+    yield f'\n{(l.line_end+1):0{llen}} {lines[l.line_end]}'
 def format_inner_context(l: parglare.common.Location, lines: list[str], llen: int) -> cabc.Generator[str, None, None]:
     if l.line == l.line_end:
         yield f'{l.line:0{llen}} {lines[l.line-1]}\n'
         yield f'{" "*llen} {" "*(l.column)}^'
         if l.column != l.column_end:
-            yield f'{"~"*(l.column_end-l.column)}^'
+            yield f'{"~"*(l.column_end-l.column-1)}^'
         return
     yield f'{" "*llen} {" "*(l.column-1)}v\n'
-    for ln in range(l.line, l.line_end):
+    for ln in range(l.line, l.line_end+1):
         yield f'{ln:0{llen}} {lines[ln-1]}\n'
-    yield f'{" "*llen} {" "*(l.column_end-1)}^'
+    yield f'{" "*llen} {" "*(l.column_end)}^'
 
 def format_context(l: parglare.common.Location,
                    precontext: bool = True, postcontext: bool = True) -> cabc.Generator[str, None, None]:
@@ -45,7 +45,7 @@ def format_context(l: parglare.common.Location,
     if precontext and (l.line > 1):
         yield from format_pre_context(l, lines, llen)
     yield from format_inner_context(l, lines, llen)
-    if postcontext and (l.line_end < len(lines)):
+    if postcontext and (l.line_end+1 < len(lines)):
         yield from format_post_context(l, lines, llen)
     
 
