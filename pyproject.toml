@@ -1,6 +1,6 @@
 [project]
 name = "caustic.parser"
-version = "2.2.1"
+version = "2.2.2"
 dependencies = []
 requires-python = ">=3.9"
 authors = [{name="Shae.c32"}]

@@ -68,7 +68,7 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
             "pretty" is recommended for viewing (without post-processing)
         Note that the "tree" format will force the LR (the default parser if --glr is not set) parser to generate a tree
     '''
-    error = lambda *a,**kw: click.echo(click.style(*a), (255, 63, 63), color=True, file=sys.stderr, **kw)
+    error = lambda *a,**kw: click.echo(click.style(*a, (255, 63, 63)), color=True, file=sys.stderr, **kw)
     debug = (lambda *a,**kw: None) if quiet else (lambda *a,**kw: click.echo(*a, file=sys.stderr, **kw))
     real_source = str(source) != '-'
     tree_fmt = format == 'tree'
