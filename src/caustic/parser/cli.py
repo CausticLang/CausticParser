@@ -79,7 +79,7 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
         grammar = default_grammar()
         debug_(f'Default grammar discovered at {grammar}')
     debug_(f'Loading grammar and constructing parser from {grammar}')
-    parser = CausticParser.from_file(grammar, parser_type=(GLRParser if glr else Parser), build_tree=(tree_fmt or glr), debug=debug)
+    parser = CausticParser.from_file(grammar, parser_type=(GLRParser if glr else Parser), build_tree=(tree_fmt or glr), debug=debug, lexical_disambiguation=(format != 'multitree'))
     # Parse data
     try:
         parsed = (parser.parser.parse_file(source) if real_source
