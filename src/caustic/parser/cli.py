@@ -58,7 +58,9 @@ def cst_to_pretty(top: 'CausticASTNode') -> bytes:
 @click.option('-o', '--output', type=click.File('wb'), help='Where to write the output (defaults to a filename depending on the SOURCE and format, use "-" for STDOUT)', default=None)
 @click.option('-f', '--format', type=click.Choice(('pickle', 'json', 'json-pretty', 'pretty', 'tree')), help='What format to write as', default='pickle')
 @click.option('-q', '--quiet', help='Don\'t output status messages unless a failure occurs', is_flag=True, default=False)
-def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, format: typing.Literal['pickle', 'json', 'json-pretty'], quiet: bool, glr: bool) -> None:
+@click.option('--debug', help='Put the parser in "debug" mode (see ParGlare docs)', is_flag=True, default=False)
+def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, format: typing.Literal['pickle', 'json', 'json-pretty'],
+        quiet: bool, glr: bool, debug: bool) -> None:
     '''
         Parses a Caustic source file into a CST for compiling
 
@@ -69,15 +71,15 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
         Note that the "tree" format will force the LR (the default parser if --glr is not set) parser to generate a tree
     '''
     error = lambda *a,**kw: click.echo(click.style(*a, (255, 63, 63)), color=True, file=sys.stderr, **kw)
-    debug = (lambda *a,**kw: None) if quiet else (lambda *a,**kw: click.echo(*a, file=sys.stderr, **kw))
+    debug_ = (lambda *a,**kw: None) if quiet else (lambda *a,**kw: click.echo(*a, file=sys.stderr, **kw))
     real_source = str(source) != '-'
     tree_fmt = format == 'tree'
     # Load grammar
     if grammar is None:
         grammar = default_grammar()
-        debug(f'Default grammar discovered at {grammar}')
-    debug(f'Loading grammar and constructing parser from {grammar}')
-    parser = CausticParser.from_file(grammar, parser_type=(GLRParser if glr else Parser), build_tree=(tree_fmt or glr))
+        debug_(f'Default grammar discovered at {grammar}')
+    debug_(f'Loading grammar and constructing parser from {grammar}')
+    parser = CausticParser.from_file(grammar, parser_type=(GLRParser if glr else Parser), build_tree=(tree_fmt or glr), debug=debug)
     # Parse data
     try:
         parsed = (parser.parser.parse_file(source) if real_source
@@ -117,7 +119,7 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
     # Output
     if output is None:
         output = click.open_file((source.with_suffix(f'.cst.{suff}') if real_source else '-'), 'wb')
-    debug(f'Wrote {output.write(data)} byte(s) to {output.name}')
+    debug_(f'Wrote {output.write(data)} byte(s) to {output.name}')
 #</Header
 
 #> Main >/
