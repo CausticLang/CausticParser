@@ -98,16 +98,25 @@ def cli(*, source: Path, grammar: Path | None, output: typing.BinaryIO | None, f
             parsed = parser.parser.call_actions(parsed)
     # Encode data
     match format:
-        case 'pickle': data = cst_to_pickle(parsed)
-        case 'json': data = cst_to_short_json(parsed)
-        case 'json-pretty': data = cst_to_pretty_json(parsed)
-        case 'pretty': data = cst_to_pretty(parsed)
-        case 'tree': data = parsed.to_str().encode() + b'\n'
+        case 'pickle':
+            data = cst_to_pickle(parsed)
+            suff = 'pkl'
+        case 'json':
+            data = cst_to_short_json(parsed)
+            suff = 'json'
+        case 'json-pretty':
+            data = cst_to_pretty_json(parsed)
+            suff = 'json'
+        case 'pretty':
+            data = cst_to_pretty(parsed)
+            suff = 'pretty.txt'
+        case 'tree':
+            data = parsed.to_str().encode() + b'\n'
+            suff = 'tree.txt'
         case _: raise ValueError(f'Unknown format: {format!r}')
     # Output
     if output is None:
-        output = click.open_file((f'{source}.cst.{"pkl" if format == "pickle" else "json"}' # generate name from source and format
-                                  if real_source else '-'), 'wb')
+        output = click.open_file((f'{source}.cst.{suff}' if real_source else '-'), 'wb')
     debug(f'Wrote {output.write(data)} byte(s) to {output.name}')
 #</Header
 
