@@ -10,10 +10,11 @@ import contextlib
 from pathlib import Path
 #</Imports
 
-__all__ = ('error',
+__all__ = ('actions', 'error',
            'builtin_grammar', 'compose')
 
 #> Package
+from . import actions
 from . import error
 #</Package
 
