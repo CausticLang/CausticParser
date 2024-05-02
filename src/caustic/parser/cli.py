@@ -1,6 +1,7 @@
 #!/bin/python3
 
 #> Imports
+import sys
 import json
 import click
 import parglare
@@ -20,7 +21,7 @@ class ExitCode(IntEnum):
     BUILTIN_GRAMMAR_MISSING = 2
 
     def raise_with_msg(self, msg: str, *, print_ec: bool = True, color: str = 'red', **kwargs) -> None:
-        click.secho(f'EC {self!r}: {msg}' if print_ec else msg, color=color, **kwargs)
+        click.secho(f'EC {self.value} ({self.name}): {msg}' if print_ec else msg, color=color, file=sys.stderr, **kwargs)
         raise click.exceptions.Exit(self.value)
 
 @dataclass(slots=True, kw_only=True)
