@@ -10,11 +10,12 @@ import contextlib
 from pathlib import Path
 #</Imports
 
-__all__ = ('actions', 'error',
+__all__ = ('actions', 'cli', 'error',
            'builtin_grammar', 'compose')
 
 #> Package
 from . import actions
+# cli is not imported here due to click being an optional dependency
 from . import error
 #</Package
 
