@@ -54,6 +54,7 @@ class SharedState:
 @click.option('-v/-q', '--verbose/--quiet', 'verbosity', default=None, help='Output more or less', show_default=False)
 @click.pass_context
 def cap(ctx: click.Context, *, grammar: Path | None, verbosity: bool | None) -> None:
+    '''CAP -- CAustic Parser'''
     ctx.obj = SharedState(grammar_path=grammar, verbosity=(1 if verbosity else (0 if verbosity is None else -1)))
 
 @cap.command
@@ -61,6 +62,7 @@ def cap(ctx: click.Context, *, grammar: Path | None, verbosity: bool | None) -> 
 @click.option('-j', '--json', 'as_json', is_flag=True, default=False,
               help='Output as JSON')
 def imports(state: SharedState, *, as_json: bool) -> None:
+    '''List all files and names imported by a grammar'''
     gram = state.load_grammar()
     if as_json:
         click.echo(json.dumps(
@@ -84,6 +86,11 @@ def imports(state: SharedState, *, as_json: bool) -> None:
 @click.option('-f', '--format', type=click.Choice(('pickle', 'pretty', 'tree')), default='pickle', help='Output format')
 @click.argument('infile', type=click.Path(exists=True, dir_okay=False, path_type=Path), default=None, required=False)
 def parse(state: SharedState, *, glr: bool, cst: str, actions: str, output: typing.BinaryIO, format: typing.Literal['pickle', 'pretty', 'tree'], infile: Path | None):
+    '''
+        Parse Caustic source into Caustic nodes using a grammar
+
+        INFILE is the file to read from, defaulting to <stdin> when not given
+    '''
     tree_format = format == 'tree'
     if state.verbosity >= 1:
         click.echo(f'Importing CST from {cst}', file=sys.stderr)
