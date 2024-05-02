@@ -12,6 +12,7 @@ from pathlib import Path
 from dataclasses import dataclass
 
 from . import builtin_grammar
+from .error import format_exc
 #</Imports
 
 #> Header >/
@@ -25,6 +26,7 @@ class ExitCode(IntEnum):
     ACTIONS_MISSING = 5
     AMBIGUOUS_GLR = 6
     GLR_MULTIPLE_SOLUTIONS = 7
+    PARSE_FAILED = 8
 
     def raise_with_msg(self, msg: str, *, print_ec: bool = True, color: str = 'red', **kwargs) -> None:
         click.secho(f'EC {self.value} ({self.name}): {msg}' if print_ec else msg, color=color, file=sys.stderr, **kwargs)
@@ -102,8 +104,10 @@ def parse(state: SharedState, *, glr: bool, cst: str, actions: str, output: typi
     if state.verbosity >= 0:
         click.echo(('Parser ready, waiting for input from <stdin>'
                     if infile is None else f'Parser ready, parsing file {infile}'), file=sys.stderr)
-    parsed = (parser.parse(sys.stdin.read(), file_name='<stdin>')
-              if infile is None else parser.parse_file(infile))
+    try: parsed = (parser.parse(sys.stdin.read(), file_name='<stdin>')
+                   if infile is None else parser.parse_file(infile))
+    except parglare.exceptions.ParseError as pe:
+        ExitCode.PARSE_FAILED.raise_with_msg(format_exc(pe))
     if state.verbosity >= 1:
         click.echo('Parse complete', file=sys.stderr)
     if glr and not tree_format:
