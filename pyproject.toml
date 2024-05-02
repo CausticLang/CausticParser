@@ -1,6 +1,6 @@
 [project]
 name = "caustic.parser"
-version = "2.2.6-1"
+version = "3.0.0"
 dependencies = ['parglare']
 requires-python = ">=3.9"
 authors = [{name="Shae.c32"}]
@@ -25,10 +25,11 @@ Homepage = "https://codeberg.org/Caustic/CausticParser"
 Issues = "https://codeberg.org/Caustic/CausticParser/issues"
 
 [project.optional-dependencies]
+cst = ["caustic.cst"]
 cli = ["click"]
 
 [project.scripts]
-cap = "caustic.parser.cli:cli"
+cap = "caustic.parser.cli:cap"
 
 [build-system]
 requires = ["setuptools>=61.0"]
