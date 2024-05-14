@@ -1,0 +1,28 @@
+%prefix "cap"
+%auxil "struct cst_Root*"
+%value "cst_index"
+
+%header {
+    #define PCC_AST_NODE_CUSTOM_DATA_DEFINED
+
+    #include "ast/cst.h"
+    #include "error.h"
+
+    #define _cap_ADDNODE(node) \
+        vector_add(&(auxil->nodes), cst_NODEDOWNCAST(node))
+    #define _cap_LASTNODE vector_size(&(auxil->nodes))
+    #define _cap_MKNODE(type) \
+        (struct cst_n##type*)malloc(sizeof(struct cst_n##type))
+    #define _cap_MKINITNODE(type, ...) \
+        cst_ninit_##type(_cap_MKNODE(type), __VA_ARGS__)
+    #define _cap_COPYSTR(frm) \
+        strcpy(malloc(((strlen(frm) + 1) * sizeof(char))), frm)
+}
+%source {
+    #include "ast/cst.c"
+    #include "error.c"
+}
+
+#%import "grammar/whitespace.peg"
+%import "grammar/atoms.peg"
+#%import "grammar/expression.peg"
