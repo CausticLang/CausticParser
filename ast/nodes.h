@@ -2,6 +2,7 @@
 #define cst_NODES_GUARD 1
 
 #include <stddef.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 typedef unsigned int cst_index;
@@ -36,11 +37,16 @@ struct cst_NodeBase {
     bool is_freed;
 };
 
-typedef struct cst_NodeBase** cst_node_vec;
-
 struct cst_Root {
-    cst_node_vec nodes;
+    struct cst_NodeBase** nodes;
+    int node_count;
 };
+
+void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
+    int nc = root->node_count++;
+    root->nodes = realloc(root->nodes, sizeof(struct cst_NodeBase*) * nc);
+    root->nodes[nc] = node;
+}
 
 #define cst_MKNODETYPE(name, members, body, ...) \
     struct cst_n##name { \
