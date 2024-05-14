@@ -21,7 +21,7 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             _cst_NODEPRINTTOP(Identifier, "val[str]: %s", val);
             break;
         case Bool:
-            _cst_NODEPRINTTOP(Bool, "val[bool]: %s", val);
+            _cst_NODEPRINTTOP(Bool, "val[bool]: %u", val);
             break;
         case Integer:
             _cst_NODEPRINTTOP(Integer, "val[str]: %s", val);
