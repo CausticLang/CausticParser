@@ -1,0 +1,5 @@
+# Generated files
+a.out
+## PackCC files
+parser.c
+parser.h
