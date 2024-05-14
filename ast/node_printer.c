@@ -4,6 +4,10 @@
 #include <stdbool.h>
 
 void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
+    if (node == NULL) {
+        printf("%s<null node>%s", prefix, suffix);
+        return;
+    }
     if (node->is_freed) {
         printf("%s<freed node>%s", prefix, suffix);
         return;
