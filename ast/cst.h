@@ -1,5 +1,5 @@
-#ifndef cst_CST_GUARD
-#define cst_CST_GUARD 1
+#ifndef cst_CST_H_GUARD
+#define cst_CST_H_GUARD 1
 
 #include "nodes.h"
 
