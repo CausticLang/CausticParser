@@ -13,10 +13,19 @@ struct cap_ParserConfig {
     .suppress_error_msgs = false, \
     .error_recover = false, \
 }
+struct cap_ParserLoc {
+    unsigned int line;
+    unsigned int line_at;
+};
+#define cap_DEFAULT_LOC { \
+    .line = 0, \
+    .line_at = 0, \
+}
 
 struct cap_ParserState {
     struct cst_Root* root;
     struct cap_ParserConfig config;
+    struct cap_ParserLoc loc;
     struct cap_ParserStack* stack;
 };
 
@@ -30,6 +39,9 @@ struct cap_ParserStack {
 
 struct cap_ParserStack* cap_ps_push(struct cap_ParserState* state);
 void* cap_ps_pop(struct cap_ParserState* state);
+
+unsigned int cap_lno(struct cap_ParserState* state);
+unsigned int cap_cno(struct cap_ParserState* state, unsigned int pos);
 
 
 #endif

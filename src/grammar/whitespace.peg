@@ -1,4 +1,7 @@
 _ws <- [ \t\r\n]+
+
+NEWLINE <- '\r'? '\n' { auxil->pos->line++; auxil->pos->line_at = $0e; }
+
 _ct <- '//' [^\n] '\n'
      / '/*' ([^*] / ('*' [^/]))* '*/' ~ { _cap_ERROR("_ct", "Expected end of block comment"); }
 _ <- (_ws / _ct)*

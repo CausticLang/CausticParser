@@ -23,4 +23,11 @@ void* cap_ps_pop(struct cap_ParserState* state) {
     return nodes;
 }
 
+unsigned int cap_lno(struct cap_ParserState* state) {
+    return state->loc.line;
+}
+unsigned int cap_cno(struct cap_ParserState* state, unsigned int pos) {
+    return pos - state->loc.line_at;
+}
+
 #endif
