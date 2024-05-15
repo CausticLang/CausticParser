@@ -1,5 +1,5 @@
 atom <- (n:float_literal / n:int_literal / n:char_literal / n:bool_literal / n:bytes_literal / n:string_literal / n:identifier)
-        ~ { cap_error("atom", "Expected atom", $0, $0s, $0e); } { $$ = n; }
+        ~ { _cap_ERROR("atom", "Expected atom"); } { $$ = n; }
 
 identifier <- < [a-zA-Z_][a-zA-Z_0-9]* > {
     _cap_ADDNODE(_cap_MKINITNODE(Identifier, _cap_COPYSTR($1)));
@@ -17,11 +17,11 @@ bool_literal <-
     }
 
 int_literal <-
-    '0x' < [a-fA-F][a-fA-F_]* > ~ { cap_error("int_literal", "Expected hex digits after '0x'", $0, $0s, $0e); } {
+    '0x' < [a-fA-F][a-fA-F_]* > ~ { _cap_ERROR("int_literal", "Expected hex digits after '0x'"); } {
         _cap_ADDNODE(_cap_MKINITNODE(Integer, _cap_COPYSTR($1), 16));
         $$ = _cap_LASTNODE;
     }
-  / '0b' < [01][01_]* > ~ { cap_error("int_literal", "Expected binary digits after '0b'", $0, $0s, $0e); } {
+  / '0b' < [01][01_]* > ~ { _cap_ERROR("int_literal", "Expected binary digits after '0b'"); } {
         _cap_ADDNODE(_cap_MKINITNODE(Integer, _cap_COPYSTR($2), 2));
         $$ = _cap_LASTNODE;
     }
@@ -31,9 +31,9 @@ int_literal <-
     }
 
 float_literal <-
-    < [0-9][0-9_]* > '.' < [0-9]+ > ~ { cap_error("float_literal", "Digit required after '.'", $0, $0s, $0e); }
-    ( [eE] < [+\-] ~ { cap_error("float_literal", "Sign required after exponent", $0, $0s, $0e); } 
-      [0-9]+ ~ { cap_error("float_literal", "Digit required after exponent sign", $0, $0s, $0e); } > )? {
+    < [0-9][0-9_]* > '.' < [0-9]+ > ~ { _cap_ERROR("float_literal", "Digit required after '.'"); }
+    ( [eE] < [+\-] ~ { _cap_ERROR("float_literal", "Sign required after exponent"); }
+      [0-9]+ ~ { _cap_ERROR("float_literal", "Digit required after exponent sign"); } > )? {
         _cap_ADDNODE(_cap_MKINITNODE(Float, _cap_COPYSTR($1), _cap_COPYSTR($2), atoi($3)));
         $$ = _cap_LASTNODE;
     }
@@ -41,8 +41,8 @@ float_literal <-
 char_literal <-
     "'" <
         [^'\\] / ("\\" .)
-    > ~ { cap_error("char_literal", "Malformed char literal", $0, $0s, $0e); }
-    "'" ~ { cap_error("char_literal", "Expected ending \"'\" after char literal", $0, $0s, $0e); } {
+    > ~ { _cap_ERROR("char_literal", "Malformed char literal"); }
+    "'" ~ { _cap_ERROR("char_literal", "Expected ending \"'\" after char literal"); } {
         _cap_ADDNODE(_cap_MKINITNODE(Char, _cap_COPYSTR($1)));
         $$ = _cap_LASTNODE;
     }
@@ -51,14 +51,14 @@ bytes_literal <-
     'b'
     < 'r'? >
     (('"""'
-     < (('\\' .) / ('"' '"'? !'"') / [^\\"])* ~ { cap_error("bytes_literal", "Malformed bytes literal", $0, $0s, $0e); } >
-     '"""' ~ { cap_error("bytes_literal", "Expected ending '\"' after bytes literal", $0, $0s, $0e); }) {
+     < (('\\' .) / ('"' '"'? !'"') / [^\\"])* ~ { _cap_ERROR("bytes_literal", "Malformed bytes literal"); } >
+     '"""' ~ { _cap_ERROR("bytes_literal", "Expected ending '\"' after bytes literal"); }) {
         _cap_ADDNODE(_cap_MKINITNODE(Bytes, _cap_COPYSTR($2), _cap_COPYSTR($1)[0] == 'r'));
         $$ = _cap_LASTNODE;
     }
   / ('"'
-     < ([^"\\] / ('\\' .))* ~ { cap_error("bytes_literal", "Malformed bytes literal", $0, $0s, $0e); } >
-     '"' ~ { cap_error("bytes_literal", "Expected ending '\"' after bytes literal", $0, $0s, $0e); }) {
+     < ([^"\\] / ('\\' .))* ~ { _cap_ERROR("bytes_literal", "Malformed bytes literal"); } >
+     '"' ~ { _cap_ERROR("bytes_literal", "Expected ending '\"' after bytes literal"); }) {
         _cap_ADDNODE(_cap_MKINITNODE(Bytes, _cap_COPYSTR($3), _cap_COPYSTR($1)[0] == 'r'));
         $$ = _cap_LASTNODE;
     })
@@ -66,14 +66,14 @@ bytes_literal <-
 string_literal <-
     < 'r'? >
     (('"""'
-     < (('\\' .) / ('"' '"'? !'"') / [^\\"])* ~ { cap_error("string_literal", "Malformed string literal", $0, $0s, $0e); } >
-     '"""' ~ { cap_error("string_literal", "Expected ending '\"' after string literal", $0, $0s, $0e); }) {
+     < (('\\' .) / ('"' '"'? !'"') / [^\\"])* ~ { _cap_ERROR("string_literal", "Malformed string literal"); } >
+     '"""' ~ { _cap_ERROR("string_literal", "Expected ending '\"' after string literal"); }) {
         _cap_ADDNODE(_cap_MKINITNODE(String, _cap_COPYSTR($2), _cap_COPYSTR($1)[0] == 'r'));
         $$ = _cap_LASTNODE;
     }
   / ('"'
-     < ([^"\\] / ('\\' .))* ~ { cap_error("string_literal", "Malformed string literal", $0, $0s, $0e); } >
-     '"' ~ { cap_error("string_literal", "Expected ending '\"' after string literal", $0, $0s, $0e); }) {
+     < ([^"\\] / ('\\' .))* ~ { _cap_ERROR("string_literal", "Malformed string literal"); } >
+     '"' ~ { _cap_ERROR("string_literal", "Expected ending '\"' after string literal"); }) {
         _cap_ADDNODE(_cap_MKINITNODE(String, _cap_COPYSTR($3), _cap_COPYSTR($1)[0] == 'r'));
         $$ = _cap_LASTNODE;
     })
