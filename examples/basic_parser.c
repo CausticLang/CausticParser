@@ -20,11 +20,19 @@ int main() {
     cap_context_t* ctx = cap_create(state);
     cst_index* primary;
     cap_parse(ctx, primary);
-    // Output and free nodes
+    // Print nodes
     printf("Primary at index %d\n%d nodes\n", *primary, root->node_count);
     for (int i = 0; i < root->node_count; i++) {
         printf("Node@%d:\n", i);
         cst_print_node(root->nodes[i], " ", "\n");
-        cst_free_node(root->nodes[i]);
     }
+    // Cleanup
+    cap_destroy(ctx);
+    free(state);
+    for (int i = 0; i < root->node_count; i++) {
+        cst_free_node(root->nodes[i]);
+        free(root->nodes[i]);
+    }
+    free(root->nodes);
+    free(root);
 }
