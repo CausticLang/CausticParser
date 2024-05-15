@@ -1,6 +1,7 @@
 #ifndef cst_NODES_GUARD
 #define cst_NODES_GUARD 1
 
+#include <malloc.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -38,14 +39,13 @@ struct cst_NodeBase {
 };
 
 struct cst_Root {
-    struct cst_NodeBase** nodes;
     int node_count;
+    struct cst_NodeBase** nodes;
 };
 
 void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
-    int nc = root->node_count++;
-    root->nodes = realloc(root->nodes, sizeof(struct cst_NodeBase*) * nc);
-    root->nodes[nc] = node;
+    root->nodes = realloc(root->nodes, sizeof(struct cst_NodeBase*) * ++root->node_count);
+    root->nodes[root->node_count-1] = node;
 }
 
 #define cst_MKNODETYPE(name, members, body, ...) \
