@@ -5,7 +5,7 @@
 #define _cap_COPYSTR(frm) \
     strcpy(malloc(((strlen(frm) + 1) * sizeof(char))), frm)
 #define _cap_ERROR(rname, msg) \
-    cap_error(&auxil->config, rname, msg, _cap_PCC0, _cap_PCC0s, _cap_PCC0e)
+    cap_error(auxil, rname, msg, _cap_PCC0, _cap_PCC0s, _cap_PCC0e)
 
 #define _cap_MKNODE(type) \
     (struct cst_n##type*)malloc(sizeof(struct cst_n##type))
