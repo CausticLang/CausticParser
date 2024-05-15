@@ -8,7 +8,7 @@
 
 #include "../parser.c"
 
-int main() {
+int main(void) {
     // Setup root
     struct cst_Root* root = malloc(sizeof(struct cst_Root));
     root->nodes = NULL;
@@ -37,4 +37,5 @@ int main() {
     }
     free(root->nodes);
     free(root);
+    return 0;
 }
