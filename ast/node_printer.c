@@ -13,6 +13,7 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
         return;
     }
     printf("%stype: %d%s", prefix, node->type, suffix);
+    printf("%sat pos: %u - %u%s", prefix, node->pos_start, node->pos_end, suffix);
     switch (node->type) {
         #define _cst_NODEPRINTTOP(type, pstr, val) printf("%s" #type "/" pstr "%s", prefix, cst_NODECAST(type, node)->val, suffix)
         #define _cst_NODEPRINTSUB(type, pstr, val) do { fputs(prefix, stdout); for (int i = 0; i < strlen(#type); i++) putchar(' '); printf("/" pstr "%s", cst_NODECAST(type, node)->val, suffix); } while(0); 

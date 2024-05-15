@@ -36,6 +36,8 @@ enum cst_NodeType {
 struct cst_NodeBase {
     enum cst_NodeType type;
     bool is_freed;
+    unsigned int pos_start;
+    unsigned int pos_end;
 };
 
 struct cst_Root {
@@ -53,9 +55,11 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
         struct cst_NodeBase _base; \
         members \
     }; \
-    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, __VA_ARGS__) { \
+    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, unsigned int p_start, unsigned int p_end, __VA_ARGS__) { \
         cst_NODEDOWNCAST(n)->type = name; \
         cst_NODEDOWNCAST(n)->is_freed = false; \
+        cst_NODEDOWNCAST(n)->pos_start = p_start; \
+        cst_NODEDOWNCAST(n)->pos_end = p_end; \
         body; return n; }
 
 #define cst_MKNODETYPE_S(name, mtype, mname) \
