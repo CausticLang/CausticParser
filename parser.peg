@@ -9,8 +9,8 @@
     #include "error.h"
 
     #define _cap_ADDNODE(node) \
-        vector_add(&(auxil->nodes), cst_NODEDOWNCAST(node))
-    #define _cap_LASTNODE vector_size(&(auxil->nodes))
+        cst_node_add(auxil, cst_NODEDOWNCAST(node))
+    #define _cap_LASTNODE auxil->node_count-1
     #define _cap_MKNODE(type) \
         (struct cst_n##type*)malloc(sizeof(struct cst_n##type))
     #define _cap_MKINITNODE(type, ...) \
@@ -23,6 +23,8 @@
     #include "error.c"
 }
 
-#%import "grammar/whitespace.peg"
+_start <- n:expression { $$ = n; }
+
+%import "grammar/whitespace.peg"
 %import "grammar/atoms.peg"
-#%import "grammar/expression.peg"
+%import "grammar/expression.peg"
