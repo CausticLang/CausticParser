@@ -1,0 +1,163 @@
+expression <- n:ternary { $$ = n; }
+
+ternary <-
+    c:disjunction _ '?' _
+    t:disjunction ~ { cap_error("ternary", "Expected expression after '\?'", $0, $0s, $0e); } _
+    ':' ~ { cap_error("ternary", "':' expected", $0, $0s, $0e); } _
+    f:ternary ~ { cap_error("ternary", "Expected expression after ':'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(TernaryOp, CONDITIONAL, c, t, f));
+        $$ = _cap_LASTNODE;
+    }
+  / n:disjunction { $$ = n; }
+
+disjunction <-
+    l:disjunction _ '||' _ r:xdisjunction ~ { cap_error("disjunction", "Expected expression after '||'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, LOGOR, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:disjunction _ '??' _ r:xdisjunction ~ { cap_error("disjunction", "Expected expression after '\?\?'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, NULLCOALESCING, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:xdisjunction { $$ = n; }
+xdisjunction <-
+    l:xdisjunction _ '^^' _ r:conjunction ~ { cap_error("xdisjunction", "Expected expression after '^^'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, LOGXOR, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:conjunction { $$ = n; }
+conjunction <-
+    l:conjunction _ '&&' _ r:bitxor ~ { cap_error("conjunction", "Expected expression after '&&'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, LOGAND, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:bitxor { $$ = n; }
+
+bitxor <-
+    l:bitxor _ '^' !'^' _ r:bitor ~ { cap_error("bitxor", "Expected expression after '^'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, BITXOR, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:bitor { $$ = n; }
+bitor <-
+    l:bitor _ '|' !'|' _ r:bitand ~ { cap_error("bitor", "Expected expression after '|'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, BITOR, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:bitand { $$ = n; }
+bitand <-
+    l:bitand _ '&' !'&' _ r:comparison ~ { cap_error("bitand", "Expected expression after '&'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, BITAND, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:comparison { $$ = n; }
+
+comparison <-
+    l:comparison _ '==' _ r:inequality ~ { cap_error("comparison", "Expected expression after '=='", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, EQ, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:comparison _ '!=' _ r:inequality ~ { cap_error("comparison", "Expected expression after '!='", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, NE, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:inequality { $$ = n; }
+inequality <-
+    l:inequality _ '<=' _ r:shift ~ { cap_error("inequality", "Expected expression after '<='", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, LE, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:inequality _ '>=' _ r:shift ~ { cap_error("inequality", "Expected expression after '>='", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, GE, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:inequality _ '<' _ r:shift ~ { cap_error("inequality", "Expected expression after '<'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, LT, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:inequality _ '>' _ r:shift ~ { cap_error("inequality", "Expected expression after '>'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, GT, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:shift { $$ = n; }
+
+shift <-
+    l:shift _ '<<' _ r:sum ~ { cap_error("shift", "Expected expression after '<<'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, LSHIFT, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:shift _ '>>' _ r:sum ~ { cap_error("shift", "Expected expression after '>>'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, RSHIFT, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:sum { $$ = n; }
+
+sum <-
+    l:sum _ '+' _ r:factor ~ { cap_error("sum", "Expected expression after '+'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, ADD, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:sum _ '-' _ r:factor ~ { cap_error("sum", "Expected expression after '-'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, SUB, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:factor { $$ = n; }
+
+factor <-
+    l:factor _ '*' _ r:exp ~ { cap_error("factor", "Expected expression after '*'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, MULT, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:factor _ '@' _ r:exp ~ { cap_error("factor", "Expected expression after '@'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, MMUL, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:factor _ '/' _ r:exp ~ { cap_error("factor", "Expected expression after '/'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, DIV, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / l:factor _ '%' _ r:exp ~ { cap_error("factor", "Expected expression after '%'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, MOD, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:exp { $$ = n; }
+
+exp <-
+    l:prefix _ '**' _ r:postfix ~ { cap_error("exp", "Expected expression after '**'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(BinaryOp, POW, l, r));
+        $$ = _cap_LASTNODE;
+    }
+  / n:prefix { $$ = n; }
+
+prefix <-
+    '+' t:prefix ~ { cap_error("prefix", "Expected expression after unary '+'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(UnaryOp, POS, t));
+        $$ = _cap_LASTNODE;
+    }
+  / '-' t:prefix ~ { cap_error("prefix", "Expected expression after unary '-'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(UnaryOp, NEG, t));
+        $$ = _cap_LASTNODE;
+    }
+  / '!' t:prefix ~ { cap_error("prefix", "Expected expression after unary '!'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(UnaryOp, LOGINV, t));
+        $$ = _cap_LASTNODE;
+    }
+  / '~' t:prefix ~ { cap_error("prefix", "Expected expression after unary '~'", $0, $0s, $0e); } {
+        _cap_ADDNODE(_cap_MKINITNODE(UnaryOp, BITINV, t));
+        $$ = _cap_LASTNODE;
+    }
+  / n:postfix { $$ = n; }
+postfix <-
+    t:postfix '++' {
+        _cap_ADDNODE(_cap_MKINITNODE(UnaryOp, INC, t));
+        $$ = _cap_LASTNODE;
+    }
+  / t:postfix '--' {
+        _cap_ADDNODE(_cap_MKINITNODE(UnaryOp, DEC, t));
+        $$ = _cap_LASTNODE;
+    }
+  / n:binding { $$ = n; }
+
+binding <-
+    '(' t:expression ')' ~ { cap_error("binding", "Expected closing ')'", $0, $0s, $0e); } { $$ = t; }
+  / n:atom { $$ = n; }
