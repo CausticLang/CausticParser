@@ -10,13 +10,17 @@
 
 int main() {
     // Setup root
-    struct cst_Root* root = malloc(sizeof(struct cst_Root*));
+    struct cst_Root* root = malloc(sizeof(struct cst_Root));
     root->nodes = NULL;
     root->node_count = 0;
+    struct cap_ParserState* state = malloc(sizeof(struct cap_ParserState));
+    state->root = root;
+    state->stack = NULL;
     // Setup parser and parse
-    cap_context_t* ctx = cap_create(root);
+    cap_context_t* ctx = cap_create(state);
     cst_index* primary;
     cap_parse(ctx, primary);
+    // Output and free nodes
     printf("Primary at index %d\n%d nodes\n", *primary, root->node_count);
     for (int i = 0; i < root->node_count; i++) {
         printf("Node@%d:\n", i);

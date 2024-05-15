@@ -156,7 +156,10 @@ postfix <-
         _cap_ADDNODE(_cap_MKINITNODE(UnaryOp, DEC, t));
         $$ = _cap_LASTNODE;
     }
-  / n:binding { $$ = n; }
+  / n:invokation { $$ = n; }
+
+invokation <- n:invoke { $$ = n; }
+            / n:binding { $$ = n; }
 
 binding <-
     '(' t:expression ')' ~ { _cap_ERROR("binding", "Expected closing ')'"); } { $$ = t; }

@@ -16,7 +16,15 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
     printf("%sat pos: %u - %u%s", prefix, node->pos_start, node->pos_end, suffix);
     switch (node->type) {
         #define _cst_NODEPRINTTOP(type, pstr, val) printf("%s" #type "/" pstr "%s", prefix, cst_NODECAST(type, node)->val, suffix)
-        #define _cst_NODEPRINTSUB(type, pstr, val) do { fputs(prefix, stdout); for (int i = 0; i < strlen(#type); i++) putchar(' '); printf("/" pstr "%s", cst_NODECAST(type, node)->val, suffix); } while(0); 
+        #define _cst__NODEPRINTSUB(type, pstr) do { fputs(prefix, stdout); for (int i = 0; i <= strlen(#type); i++) putchar(' '); } while(0)
+        #define _cst_NODEPRINTSUB(type, pstr, val) do { _cst__NODEPRINTSUB(type, pstr); printf("/" pstr "%s", cst_NODECAST(type, node)->val, suffix); } while(0)
+        #define _cst_NODEPRINTSUBLIST(type, title, var, count, fmt) do { \
+            _cst__NODEPRINTSUB(type, title); \
+            printf(title "%s", suffix); \
+            for (int i = 0; i < cst_NODECAST(type, node)->count; i++) { \
+                _cst__NODEPRINTSUB(type, title); \
+                printf("- " fmt "%s", cst_NODECAST(type, node)->var[i], suffix); \
+            } } while(0)
         // Atoms
         case Identifier:
             _cst_NODEPRINTTOP(Identifier, "val[str]: %s", val);
@@ -58,9 +66,16 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             _cst_NODEPRINTTOP(TernaryOp, "a[noderef]: %u", a);
             _cst_NODEPRINTSUB(TernaryOp, "b[noderef]: %u", b);
             _cst_NODEPRINTSUB(TernaryOp, "c[noderef]: %u", c);
+        // Procedures
+        case ProcInvoke:
+            _cst_NODEPRINTTOP(ProcInvoke, "proc[noderef]: %u", proc);
+            _cst_NODEPRINTSUBLIST(ProcInvoke, "args[noderef*]:", args, arglen, "%u");
+            break;
         // Fail
         default: assert(false);
         #undef _cst_NODEPRINTTOP
+        #undef _cst__NODEPRINTSUB
         #undef _cst_NODEPRINTSUB
+        #undef _cst_NODEPRINTSUBLIST
     }
 }

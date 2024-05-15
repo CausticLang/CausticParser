@@ -1,0 +1,14 @@
+invoke <-
+    p:expression _ '(' _ { cap_ps_push(auxil); }
+        ( ( invokation_arg _ ',' _ )* invokation_arg _ ','? )?
+    _ ')' ~ { _cap_ERROR("invoke", "Expected closing ')'"); } {
+        _cap_ADDNODE(_cap_MKINITNODE(ProcInvoke, p, auxil->stack->nodes, auxil->stack->nodecount, NULL, 0));
+        cap_ps_pop(auxil);
+        $$ = _cap_LASTNODE;
+    }
+
+invokation_arg <-
+    v:expression {
+        auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(cst_index*) * ++auxil->stack->nodecount);
+        auxil->stack->nodes[auxil->stack->nodecount-1] = v;
+    }

@@ -1,22 +1,26 @@
 %prefix "cap"
-%auxil "struct cst_Root*"
+%auxil "struct cap_ParserState*"
 %value "cst_index"
 
 %header {
     #define PCC_AST_NODE_CUSTOM_DATA_DEFINED
 
-    #include "src/ast/cst.h"
+    #include "src/parser_state.h"
     #include "src/error.h"
+    #include "src/ast/cst.h"
 
     #include "src/grammar/helper.h"
 }
 %source {
-    #include "src/ast/cst.c"
+    #include "src/parser_state.c"
     #include "src/error.c"
+    #include "src/ast/cst.c"
 }
 
-_start <- n:expression { $$ = n; }
+_start <- n:invoke { $$ = n; }
+#n:expression { $$ = n; }
 
 %import "grammar/whitespace.peg"
 %import "grammar/atoms.peg"
 %import "grammar/expression.peg"
+%import "grammar/invoke.peg"

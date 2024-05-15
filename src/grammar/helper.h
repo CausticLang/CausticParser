@@ -13,5 +13,5 @@
     cst_ninit_##type(_cap_MKNODE(type), _cap_PCC0s, _cap_PCC0e, __VA_ARGS__)
 
 #define _cap_ADDNODE(node) \
-    cst_node_add(auxil, cst_NODEDOWNCAST(node))
-#define _cap_LASTNODE auxil->node_count-1
+    cst_node_add(auxil->root, cst_NODEDOWNCAST(node))
+#define _cap_LASTNODE auxil->root->node_count-1
