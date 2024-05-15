@@ -5,14 +5,14 @@
 %header {
     #define PCC_AST_NODE_CUSTOM_DATA_DEFINED
 
-    #include "ast/cst.h"
-    #include "error.h"
+    #include "src/ast/cst.h"
+    #include "src/error.h"
 
-    #include "grammar/helper.h"
+    #include "src/grammar/helper.h"
 }
 %source {
-    #include "ast/cst.c"
-    #include "error.c"
+    #include "src/ast/cst.c"
+    #include "src/error.c"
 }
 
 _start <- n:expression { $$ = n; }
