@@ -10,13 +10,14 @@ struct cap_ParserState {
 
 struct cap_ParserStack {
     struct cap_ParserStack* prev;
-    cst_index* nodes;
+    void* nodes;
     unsigned int nodecount;
+    int mark;
 };
 
 
 struct cap_ParserStack* cap_ps_push(struct cap_ParserState* state);
-cst_index* cap_ps_pop(struct cap_ParserState* state);
+void* cap_ps_pop(struct cap_ParserState* state);
 
 
 #endif

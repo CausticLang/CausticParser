@@ -21,6 +21,8 @@ void cst_free_node(struct cst_NodeBase* node) {
         _cst_FREEVAL(String);
         case ProcInvoke:
             free(cst_NODECAST(ProcInvoke, node)->args);
+            for (int i = 0; i < cst_NODECAST(ProcInvoke, node)->kwarglen; i++)
+                free(cst_NODECAST(ProcInvoke, node)->kwargs[i]);
             free(cst_NODECAST(ProcInvoke, node)->kwargs);
             break;
         case ProcExpr:

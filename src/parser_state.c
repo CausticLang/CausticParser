@@ -12,13 +12,15 @@ struct cap_ParserStack* cap_ps_push(struct cap_ParserState* state) {
     state->stack->prev = prev;
     state->stack->nodes = NULL;
     state->stack->nodecount = 0;
+    state->stack->mark = -1;
 }
-cst_index* cap_ps_pop(struct cap_ParserState* state) {
+void* cap_ps_pop(struct cap_ParserState* state) {
     assert(state->stack != NULL);
-    cst_index* nodes = state->stack->nodes;
+    void* nodes = state->stack->nodes;
     struct cap_ParserStack* cur = state->stack;
     state->stack = state->stack->prev;
     free(cur);
+    return nodes;
 }
 
 #endif

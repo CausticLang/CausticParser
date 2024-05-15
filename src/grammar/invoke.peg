@@ -1,14 +1,41 @@
 invoke <-
-    p:expression _ '(' _ { cap_ps_push(auxil); }
-        ( ( invokation_arg _ ',' _ )* invokation_arg _ ','? )?
+    p:expression _ '(' _ { cap_ps_push(auxil); auxil->stack->mark = 1; }
+        ( ( ( invokation_arg _ ',' _ )+ ( invokation_arg / ( invokation_kwargs ','? ) )? )
+        / ( ( invokation_arg / invokation_kwargs ) _ ','? ) )?
     _ ')' ~ { _cap_ERROR("invoke", "Expected closing ')'"); } {
-        _cap_ADDNODE(_cap_MKINITNODE(ProcInvoke, p, auxil->stack->nodes, auxil->stack->nodecount, NULL, 0));
-        cap_ps_pop(auxil);
+        struct cst_nProcInvoke* node = _cap_MKINITNODE(ProcInvoke, p, NULL, 0, NULL, 0);
+        if (auxil->stack != NULL) {
+            if (auxil->stack->mark == 2) {
+                node->kwarglen = auxil->stack->nodecount;
+                node->kwargs = (struct cst_ProcKwarg**)cap_ps_pop(auxil);
+            }
+            assert(auxil->stack != NULL);
+            assert(auxil->stack->mark == 1);
+            node->arglen = auxil->stack->nodecount;
+            node->args = cap_ps_pop(auxil);
+        }
+        _cap_ADDNODE(node);
         $$ = _cap_LASTNODE;
     }
 
 invokation_arg <-
     v:expression {
+        assert(auxil->stack->mark == 1);
         auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(cst_index*) * ++auxil->stack->nodecount);
-        auxil->stack->nodes[auxil->stack->nodecount-1] = v;
+        ((cst_index*)auxil->stack->nodes)[auxil->stack->nodecount-1] = v;
+    } _ !'='
+
+invokation_kwargs <-
+    { cap_ps_push(auxil); auxil->stack->mark = 2; }
+    (invokation_kwarg _ ',' _)+ invokation_kwarg?
+  / invokation_kwarg
+
+invokation_kwarg <-
+    k:expression _ '=' _ v:expression ~ { _cap_ERROR("invokation_kwarg", "Expected expression after '='"); } {
+        assert(auxil->stack->mark == 2);
+        auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(struct Proc_Kwarg*) * ++auxil->stack->nodecount);
+        struct cst_ProcKwarg* kw = malloc(sizeof(struct cst_ProcKwarg));
+        kw->key = k; kw->val = v;
+        printf("k:%d, v:%d\n", k, v);
+        ((struct cst_ProcKwarg**)auxil->stack->nodes)[auxil->stack->nodecount-1] = kw;
     }

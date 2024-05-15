@@ -6,7 +6,7 @@ cst_MKNODETYPE(ProcInvoke,
     cst_index proc;
     cst_index* args;
     size_t arglen;
-    struct cst_ProcKwarg* kwargs;
+    struct cst_ProcKwarg** kwargs;
     size_t kwarglen;,
     {
         n->proc = proc;
@@ -14,7 +14,7 @@ cst_MKNODETYPE(ProcInvoke,
         n->arglen = arglen;
         n->kwargs = kwargs;
         n->kwarglen = kwarglen;
-    }, cst_index proc, cst_index* args, size_t arglen, struct cst_ProcKwarg* kwargs, size_t kwarglen);
+    }, cst_index proc, cst_index* args, size_t arglen, struct cst_ProcKwarg** kwargs, size_t kwarglen);
 
 struct cst_ProcParam {
     cst_index type; cst_index name; cst_index val;
