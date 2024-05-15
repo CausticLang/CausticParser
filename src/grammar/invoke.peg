@@ -1,5 +1,5 @@
 invoke <-
-    p:expression _ '(' _ { cap_ps_push(auxil); auxil->stack->mark = 1; }
+    p:invokation _ '(' _ { cap_ps_push(auxil); auxil->stack->mark = 1; }
         ( ( ( invokation_arg _ ',' _ )+ ( invokation_arg / ( invokation_kwargs ','? ) )? )
         / ( ( invokation_arg / invokation_kwargs ) _ ','? ) )?
     _ ')' ~ { _cap_ERROR("invoke", "Expected closing ')'"); } {
