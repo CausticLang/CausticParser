@@ -53,7 +53,10 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
         struct cst_NodeBase _base; \
         members \
     }; \
-    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, __VA_ARGS__) { cst_NODEDOWNCAST(n)->type = name; body; return n; }
+    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, __VA_ARGS__) { \
+        cst_NODEDOWNCAST(n)->type = name; \
+        cst_NODEDOWNCAST(n)->is_freed = false; \
+        body; return n; }
 
 #define cst_MKNODETYPE_S(name, mtype, mname) \
     cst_MKNODETYPE(name, mtype mname;, {n->mname = mname;}, mtype mname)
