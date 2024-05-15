@@ -17,7 +17,7 @@
     #include "src/ast/cst.c"
 }
 
-_start <- n:expression { $$ = n; }
+_start <- n:expression { $$ = n; } EOF ~ { _cap_ERROR("_start", "Expected EOF"); }
 
 %import "grammar/whitespace.peg"
 %import "grammar/atoms.peg"
