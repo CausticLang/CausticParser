@@ -3,13 +3,15 @@
 %value "cst_index"
 
 %header {
-    #define PCC_AST_NODE_CUSTOM_DATA_DEFINED
-
     #include "src/parser_state.h"
     #include "src/error.h"
     #include "src/ast/cst.h"
 
     #include "src/grammar/helper.h"
+
+    #define PCC_AST_NODE_CUSTOM_DATA_DEFINED
+    /*#define PCC_ERROR(auxil, event, rule, level, pos, buffer, length) \
+        cap_debug(auxil, event, rule, level, pos, buffer, length);*/
 }
 %source {
     #include "src/parser_state.c"
@@ -17,7 +19,7 @@
     #include "src/ast/cst.c"
 }
 
-_start <- n:expression { $$ = n; } EOF ~ { _cap_ERROR("_start", "Expected EOF"); }
+_start <- _ n:expression { $$ = n; } _ EOF ~ { _cap_ERROR("_start", "Expected EOF"); }
 
 %import "grammar/whitespace.peg"
 %import "grammar/atoms.peg"

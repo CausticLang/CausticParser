@@ -3,8 +3,20 @@
 
 #include "ast/cst.h"
 
+#include <stdbool.h>
+
+struct cap_ParserConfig {
+    bool suppress_error_msgs;
+    bool error_recover;
+};
+#define cap_DEFAULT_CONFIG { \
+    .suppress_error_msgs = false, \
+    .error_recover = false, \
+}
+
 struct cap_ParserState {
     struct cst_Root* root;
+    struct cap_ParserConfig config;
     struct cap_ParserStack* stack;
 };
 

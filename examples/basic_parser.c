@@ -15,6 +15,7 @@ int main() {
     root->node_count = 0;
     struct cap_ParserState* state = malloc(sizeof(struct cap_ParserState));
     state->root = root;
+    state->config = (struct cap_ParserConfig)cap_DEFAULT_CONFIG;
     state->stack = NULL;
     // Setup parser and parse
     cap_context_t* ctx = cap_create(state);
