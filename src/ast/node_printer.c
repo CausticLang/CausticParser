@@ -89,6 +89,24 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
                 printf("  val[noderef]: %u%s", cst_NODECAST(ProcInvoke, node)->kwargs[i]->val, suffix);
             }
             break;
+        case ProcExpr:
+            _cst_NODEPRINTTOP(ProcExpr, "rtype[noderef]: %u", rtype);
+            _cst_NODEPRINTSUB(ProcExpr, "param_len[int]: %u", param_len);
+            _cst__NODEPRINTSUB(ProcExpr, "params[ProcParam*]:");
+            printf("/params[ProcParam*]: %s", suffix);
+            for (int i = 0; i < cst_NODECAST(ProcExpr, node)->param_len; i++) {
+                _cst__NODEPRINTSUB(ProcExpr, "params[ProcParam*]:");
+                printf("- type[noderef]: %u%s", cst_NODECAST(ProcExpr, node)->params[i].type, suffix);
+                _cst__NODEPRINTSUB(ProcExpr, "params[ProcParam*]:");
+                printf("  name[noderef]: %u%s", cst_NODECAST(ProcExpr, node)->params[i].name, suffix);
+                _cst__NODEPRINTSUB(ProcExpr, "params[ProcParam*]:");
+                printf("  val[noderef]: %u%s", cst_NODECAST(ProcExpr, node)->params[i].val, suffix);
+                _cst__NODEPRINTSUB(ProcExpr, "params[ProcParam*]:");
+                printf("  has_default[bool]: %d%s", cst_NODECAST(ProcExpr, node)->params[i].has_default, suffix);
+                _cst__NODEPRINTSUB(ProcExpr, "params[ProcParam*]:");
+                printf("  param_type: %d%s", cst_NODECAST(ProcExpr, node)->params[i].param_type, suffix);
+            }
+            break;
         // Fail
         default: assert(false);
         #undef _cst_NODEPRINTTOP
