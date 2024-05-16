@@ -2,8 +2,23 @@ NEWLINE <- '\r'? '\n' { auxil->loc.line++; auxil->loc.line_at = $0e; }
 
 _ws <- ( [ \t]+ / NEWLINE+ )+
 
-_ct <- '//' [^\n] NEWLINE
-     / '/*' (NEWLINE / [^*] / ('*' [^/]))* '*/' ~ { _cap_ERROR("_ct", "Expected end of block comment"); }
+_ct <-
+    '//' <[^\n]> NEWLINE {
+        if (!auxil->config.track_comments) {
+            $$ = 0;
+            return;
+        }
+        _cap_ADDNODE(_cap_MKINITNODE(ExtraData, "comment:oneline", _cap_COPYSTR($1), true));
+        $$ = _cap_LASTNODE;
+    }
+   / '/*' <(NEWLINE / [^*] / ('*' [^/]))*> '*/' ~ { _cap_ERROR("_ct", "Expected end of block comment"); } {
+        if (!auxil->config.track_comments) {
+            $$ = 0;
+            return;
+        }
+        _cap_ADDNODE(_cap_MKINITNODE(ExtraData, "comment:multiline", _cap_COPYSTR($2), true));
+        $$ = _cap_LASTNODE;
+    }
 _ <- (_ws / _ct)*
 
 EOF <- !.
