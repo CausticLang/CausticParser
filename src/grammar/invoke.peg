@@ -36,6 +36,5 @@ invokation_kwarg <-
         auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(struct Proc_Kwarg*) * ++auxil->stack->nodecount);
         struct cst_ProcKwarg* kw = malloc(sizeof(struct cst_ProcKwarg));
         kw->key = k; kw->val = v;
-        printf("k:%d, v:%d\n", k, v);
         ((struct cst_ProcKwarg**)auxil->stack->nodes)[auxil->stack->nodecount-1] = kw;
     }
