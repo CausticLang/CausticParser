@@ -27,8 +27,8 @@ invokation_arg <-
 
 invokation_kwargs <-
     { cap_ps_push(auxil); auxil->stack->mark = 2; }
-    (invokation_kwarg _ ',' _)+ invokation_kwarg?
-  / invokation_kwarg
+    ( ( invokation_kwarg _ ',' _)+ invokation_kwarg?
+      / invokation_kwarg )
 
 invokation_kwarg <-
     k:expression _ '=' _ v:expression ~ { _cap_ERROR("invokation_kwarg", "Expected expression after '='"); } {
