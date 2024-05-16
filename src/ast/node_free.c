@@ -14,6 +14,11 @@ void cst_free_node(struct cst_NodeBase* node) {
         case Attribute: case Subscript:
         case IfStmt: case ElIfStmt: case ElseStmt: case ForStmt: case WhileStmt:
             break; // no freeing needed
+        case ExtraData:
+            if (!cst_NODECAST(ExtraData, node)->static_meta)
+                free(cst_NODECAST(ExtraData, node)->meta);
+            free(cst_NODECAST(ExtraData, node)->data);
+            break;
         case Block:
             free(cst_NODECAST(Block, node)->nodes);
             break;

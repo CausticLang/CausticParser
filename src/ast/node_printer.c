@@ -29,6 +29,10 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
         case Entrypoint:
             _cst_NODEPRINTTOP(Entrypoint, "node[noderef]: %u", node);
             break;
+        case ExtraData:
+            _cst_NODEPRINTTOP(ExtraData, "meta[char*]: %s", meta);
+            _cst_NODEPRINTSUB(ExtraData, "data[char*]: %s", data);
+            break;
         case Block:
             _cst_NODEPRINTTOP(Block, "node_count[int]: %d", node_count);
             _cst_NODEPRINTSUBLIST(Block, "nodes[noderef*]:", nodes, node_count, "%u");

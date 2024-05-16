@@ -63,6 +63,10 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
         case Entrypoint:
             _cst_serialize_index(cst_NODECAST(Entrypoint, node)->node, stream);
             break;
+        case ExtraData:
+            _cst_serialize_chars(cst_NODECAST(ExtraData, node)->meta, stream);
+            _cst_serialize_chars(cst_NODECAST(ExtraData, node)->data, stream);
+            break;
         case Block:
             _cst_serialize_sizet(cst_NODECAST(Block, node)->node_count, stream);
             _cst_serialize_indexes(cst_NODECAST(Block, node)->nodes, cst_NODECAST(Block, node)->node_count, stream);
@@ -206,6 +210,11 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
         case Entrypoint:
             _cst_ALLOCNODE(Entrypoint);
             cst_NODECAST(Entrypoint, node)->node = _cst_deserialize_index(stream);
+            break;
+        case ExtraData:
+            _cst_ALLOCNODE(ExtraData);
+            cst_NODECAST(ExtraData, node)->meta = _cst_deserialize_chars(stream);
+            cst_NODECAST(ExtraData, node)->data = _cst_deserialize_chars(stream);
             break;
         case Block:
             _cst_ALLOCNODE(Block);

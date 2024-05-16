@@ -11,6 +11,7 @@ typedef unsigned int cst_index;
 enum cst_NodeType {
     // Control
     Entrypoint = 0,
+    ExtraData = 255,
     Block = 16,
     // Expressions
     /// Atoms
@@ -76,6 +77,12 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
 #define cst_NODEDOWNCAST(node) ((struct cst_NodeBase*)node)
 
 cst_MKNODETYPE_S(Entrypoint, cst_index, node);
+
+cst_MKNODETYPE(ExtraData, char* meta; char* data; bool static_meta;, {
+    n->meta = meta;
+    n->data = data;
+    n->static_meta = static_meta;
+}, char* meta, char* data, bool static_meta);
 
 #include "nodes/access.h"
 #include "nodes/atoms.h"
