@@ -3,6 +3,7 @@ line_statement <- illegal_stmt
 block_statement <-
     illegal_stmt
   / s:if_stmt { $$ = s; }
+  / s:for_stmt { $$ = s; }
 
 illegal_stmt <-
     'elif' { _cap_ERROR("statement", "Unexpected 'elif'"); }
@@ -26,5 +27,19 @@ elif_stmt <-
 else_stmt <-
     'else' _ b:body {
         _cap_ADDNODE(_cap_MKINITNODE(ElseStmt, b));
+        $$ = _cap_LASTNODE;
+    }
+
+for_stmt <-
+    'for' _ '(' ~ { _cap_ERROR("for_stmt", "Expected '(' after 'for'"); }
+    _ ( init:line_statement / init:expression )? ~ { _cap_ERROR("for_stmt", "Expected expression or line-statement after '(' as for initialization part"); }
+    _ EOL ~ { _cap_ERROR("for_stmt", "Expected EOL ';' after for initialization part"); }
+    _ cond:expression? ~ { _cap_ERROR("for_stmt", "Expected expression as for condition part"); }
+    _ EOL ~ { _cap_ERROR("for_stmt", "Expected EOL ';' after for condition part"); }
+    _ ( iter:line_statement / iter:expression )? ~ { _cap_ERROR("for_stmt", "Expected expression or line-statement as for iteration part"); }
+    _ EOL?
+    _ ')' ~ { _cap_ERROR("for_stmt", "Expected closing ')'"); }
+    _ body:body ~ { _cap_ERROR("for_stmt", "Expected for body"); } {
+        _cap_ADDNODE(_cap_MKINITNODE(ForStmt, init, cond, iter, body));
         $$ = _cap_LASTNODE;
     }
