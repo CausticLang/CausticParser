@@ -40,13 +40,13 @@ for_stmt <-
     _ ( iter:line_statement / iter:expression )? ~ { _cap_ERROR("for_stmt", "Expected expression or line-statement as for iteration part"); }
     _ EOL?
     _ ')' ~ { _cap_ERROR("for_stmt", "Expected closing ')'"); }
-    _ body:body ~ { _cap_ERROR("for_stmt", "Expected for body"); } {
+    _ ( body:body / EOL ) ~ { _cap_ERROR("for_stmt", "Expected for body or EOL ';'"); } {
         _cap_ADDNODE(_cap_MKINITNODE(ForStmt, init, cond, iter, body));
         $$ = _cap_LASTNODE;
     }
 
 while_stmt <-
-    c:while_cond _ b:body ~ { _cap_ERROR("while_stmt", "Expected while body"); } {
+    c:while_cond _ ( b:body / EOL ) ~ { _cap_ERROR("while_stmt", "Expected while body or EOL ';'"); } {
         _cap_ADDNODE(_cap_MKINITNODE(WhileStmt, c, b, false));
         $$ = _cap_LASTNODE;
     }
