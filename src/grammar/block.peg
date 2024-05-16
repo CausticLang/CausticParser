@@ -1,1 +1,19 @@
 EOL <- ';'
+
+block_inner <-
+    {
+        cap_ps_push(auxil);
+        auxil->stack->mark = BLOCK;
+        auxil->stack->nodes = cst_ninit_Block(malloc(sizeof(struct cst_nBlock)), $0s, $0e);
+    }
+    line_inner*
+    {
+        assert(auxil->stack->mark == BLOCK);
+        _cap_ADDNODE((struct cst_nBlock*)cap_ps_pop(auxil));
+        $$ = _cap_LASTNODE;
+    }
+
+line_inner <-
+    s:expression EOL ~ { _cap_ERROR("line_inner", "Expected EOL (;)"); } {
+        cst_nBlock_addnode(auxil->stack->nodes, s);
+    }

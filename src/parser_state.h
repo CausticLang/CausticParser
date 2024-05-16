@@ -29,11 +29,18 @@ struct cap_ParserState {
     struct cap_ParserStack* stack;
 };
 
+enum cap_ParserStackMark {
+    NONE,
+    BLOCK,
+    INVOKE_ARGS,
+    INVOKE_KWARGS,
+};
+
 struct cap_ParserStack {
     struct cap_ParserStack* prev;
     void* nodes;
     unsigned int nodecount;
-    int mark;
+    enum cap_ParserStackMark mark;
 };
 
 

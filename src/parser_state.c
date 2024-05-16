@@ -12,7 +12,7 @@ struct cap_ParserStack* cap_ps_push(struct cap_ParserState* state) {
     state->stack->prev = prev;
     state->stack->nodes = NULL;
     state->stack->nodecount = 0;
-    state->stack->mark = -1;
+    state->stack->mark = NONE;
 }
 void* cap_ps_pop(struct cap_ParserState* state) {
     assert(state->stack != NULL);

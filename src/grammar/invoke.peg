@@ -1,16 +1,16 @@
 invoke <-
-    p:invokation _ '(' _ { cap_ps_push(auxil); auxil->stack->mark = 1; }
+    p:invokation _ '(' _ { cap_ps_push(auxil); auxil->stack->mark = INVOKE_ARGS; }
         ( ( ( invokation_arg _ ',' _ )+ ( invokation_arg / ( invokation_kwargs ','? ) )? )
         / ( ( invokation_arg / invokation_kwargs ) _ ','? ) )?
     _ ')' ~ { _cap_ERROR("invoke", "Expected closing ')'"); } {
         struct cst_nProcInvoke* node = _cap_MKINITNODE(ProcInvoke, p, NULL, 0, NULL, 0);
         if (auxil->stack != NULL) {
-            if (auxil->stack->mark == 2) {
+            if (auxil->stack->mark == INVOKE_KWARGS) {
                 node->kwarglen = auxil->stack->nodecount;
                 node->kwargs = (struct cst_ProcKwarg**)cap_ps_pop(auxil);
             }
             assert(auxil->stack != NULL);
-            assert(auxil->stack->mark == 1);
+            assert(auxil->stack->mark == INVOKE_ARGS);
             node->arglen = auxil->stack->nodecount;
             node->args = cap_ps_pop(auxil);
         }
@@ -20,19 +20,19 @@ invoke <-
 
 invokation_arg <-
     v:expression {
-        assert(auxil->stack->mark == 1);
+        assert(auxil->stack->mark == INVOKE_ARGS);
         auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(cst_index*) * ++auxil->stack->nodecount);
         ((cst_index*)auxil->stack->nodes)[auxil->stack->nodecount-1] = v;
     } _ !'='
 
 invokation_kwargs <-
-    { cap_ps_push(auxil); auxil->stack->mark = 2; }
+    { cap_ps_push(auxil); auxil->stack->mark = INVOKE_KWARGS; }
     ( ( invokation_kwarg _ ',' _)+ invokation_kwarg?
       / invokation_kwarg )
 
 invokation_kwarg <-
     k:expression _ '=' _ v:expression ~ { _cap_ERROR("invokation_kwarg", "Expected expression after '='"); } {
-        assert(auxil->stack->mark == 2);
+        assert(auxil->stack->mark == INVOKE_KWARGS);
         auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(struct Proc_Kwarg*) * ++auxil->stack->nodecount);
         struct cst_ProcKwarg* kw = malloc(sizeof(struct cst_ProcKwarg));
         kw->key = k; kw->val = v;
