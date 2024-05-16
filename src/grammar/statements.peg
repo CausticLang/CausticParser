@@ -12,18 +12,16 @@ illegal_stmt <-
 
 if_stmt <-
     'if' _ c:expression _ b:body
-    ( _ ( n:elif_stmt / n:else_stmt )
-        { _cap_ADDNODE(_cap_MKINITNODE(IfStmt, c, b, n));
-          $$ = _cap_LASTNODE; }
-      / { _cap_ADDNODE(_cap_MKINITNODE(IfStmt, c, b, _cap_LASTNODE));
-          $$ = _cap_LASTNODE; } )
+    _ ( n:elif_stmt / n:else_stmt ) {
+        _cap_ADDNODE(_cap_MKINITNODE(IfStmt, c, b, n));
+        $$ = _cap_LASTNODE;
+    }
 elif_stmt <-
     'elif' _ c:expression _ b:body
-    ( _ ( n:elif_stmt / n:else_stmt )
-        { _cap_ADDNODE(_cap_MKINITNODE(ElIfStmt, c, b, n));
-          $$ = _cap_LASTNODE; }
-      / { _cap_ADDNODE(_cap_MKINITNODE(ElIfStmt, c, b, _cap_LASTNODE));
-          $$ = _cap_LASTNODE; } )
+    _ ( n:elif_stmt / n:else_stmt ) {
+        _cap_ADDNODE(_cap_MKINITNODE(ElIfStmt, c, b, n));
+        $$ = _cap_LASTNODE;
+    }
 else_stmt <-
     'else' _ b:body {
         _cap_ADDNODE(_cap_MKINITNODE(ElseStmt, b));
