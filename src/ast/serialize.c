@@ -55,6 +55,11 @@ void cst_nserialize_metadata_to(struct cst_NodeBase* node, FILE* stream) {
 void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
     cst_nserialize_metadata_to(node, stream);
     switch (node->type) {
+        // Control
+        case Block:
+            _cst_serialize_int(cst_NODECAST(Block, node)->node_count, stream);
+            _cst_serialize_indexes(cst_NODECAST(Block, node)->nodes, cst_NODECAST(Block, node)->node_count, stream);
+            break;
         // Atoms
         case Identifier:
             _cst_serialize_chars(cst_NODECAST(Identifier, node)->val, stream);
@@ -151,6 +156,12 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
     // Type
     switch (type) {
         #define _cst_ALLOCNODE(type) node = cst_NODEDOWNCAST(malloc(sizeof(struct cst_n##type)))
+        // Control
+        case Block:
+            _cst_ALLOCNODE(Block);
+            size_t ncount = cst_NODECAST(Block, node)->node_count = _cst_deserialize_int(stream);
+            cst_NODECAST(Block, node)->nodes = _cst_deserialize_indexes(ncount, stream);
+            break;
         // Atoms
         case Identifier:
             _cst_ALLOCNODE(Identifier);
