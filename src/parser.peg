@@ -4,7 +4,7 @@
 
 %header {
     #include "src/parser_state.h"
-    #include "src/error.h"
+    //#include "src/error.h"
     #include "src/ast/cst.h"
 
     #include "src/grammar/helper.h"
@@ -15,7 +15,7 @@
 }
 %source {
     #include "src/parser_state.c"
-    #include "src/error.c"
+    #include "src/error.h"
     #include "src/ast/cst.c"
 }
 
@@ -28,4 +28,9 @@ _start <-
 %import "grammar/block.peg"
 %import "grammar/expression.peg"
 %import "grammar/invoke.peg"
+%import "grammar/procedure.peg"
 %import "grammar/whitespace.peg"
+
+%%
+
+#include "src/error.c"
