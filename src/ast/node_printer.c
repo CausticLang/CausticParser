@@ -107,6 +107,25 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
                 printf("  param_type: %d%s", cst_NODECAST(ProcExpr, node)->params[i].param_type, suffix);
             }
             break;
+        case ProcStmt:
+            _cst_NODEPRINTTOP(ProcStmt, "name[noderef]: %u", name);
+            _cst_NODEPRINTSUB(ProcStmt, "rtype[noderef]: %u", rtype);
+            _cst_NODEPRINTSUB(ProcStmt, "param_len[int]: %u", param_len);
+            _cst__NODEPRINTSUB(ProcStmt, "params[ProcParam*]:");
+            printf("/params[ProcParam*]: %s", suffix);
+            for (int i = 0; i < cst_NODECAST(ProcStmt, node)->param_len; i++) {
+                _cst__NODEPRINTSUB(ProcStmt, "params[ProcParam*]:");
+                printf("- type[noderef]: %u%s", cst_NODECAST(ProcStmt, node)->params[i].type, suffix);
+                _cst__NODEPRINTSUB(ProcStmt, "params[ProcParam*]:");
+                printf("  name[noderef]: %u%s", cst_NODECAST(ProcStmt, node)->params[i].name, suffix);
+                _cst__NODEPRINTSUB(ProcStmt, "params[ProcParam*]:");
+                printf("  val[noderef]: %u%s", cst_NODECAST(ProcStmt, node)->params[i].val, suffix);
+                _cst__NODEPRINTSUB(ProcStmt, "params[ProcParam*]:");
+                printf("  has_default[bool]: %d%s", cst_NODECAST(ProcStmt, node)->params[i].has_default, suffix);
+                _cst__NODEPRINTSUB(ProcStmt, "params[ProcParam*]:");
+                printf("  param_type: %d%s", cst_NODECAST(ProcStmt, node)->params[i].param_type, suffix);
+            }
+            break;
         // Statements
         case IfStmt:
             _cst_NODEPRINTTOP(IfStmt, "condition[noderef]: %u", condition);

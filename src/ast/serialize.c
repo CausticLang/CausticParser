@@ -129,6 +129,12 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_sizet(cst_NODECAST(ProcExpr, node)->param_len, stream);
             _cst_serialize_params(cst_NODECAST(ProcExpr, node)->params, cst_NODECAST(ProcExpr, node)->param_len, stream);
             break;
+        case ProcStmt:
+            _cst_serialize_index(cst_NODECAST(ProcStmt, node)->name, stream);
+            _cst_serialize_index(cst_NODECAST(ProcStmt, node)->rtype, stream);
+            _cst_serialize_sizet(cst_NODECAST(ProcStmt, node)->param_len, stream);
+            _cst_serialize_params(cst_NODECAST(ProcStmt, node)->params, cst_NODECAST(ProcStmt, node)->param_len, stream);
+            break;
         // Statements
         case IfStmt:
             _cst_serialize_index(cst_NODECAST(IfStmt, node)->condition, stream);
@@ -278,6 +284,13 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             cst_NODECAST(ProcExpr, node)->rtype = _cst_deserialize_index(stream);
             size_t param_len = cst_NODECAST(ProcExpr, node)->param_len = _cst_deserialize_sizet(stream);
             cst_NODECAST(ProcExpr, node)->params = _cst_deserialize_params(param_len, stream);
+            break;
+        case ProcStmt:
+            _cst_ALLOCNODE(ProcStmt);
+            cst_NODECAST(ProcStmt, node)->name = _cst_deserialize_index(stream);
+            cst_NODECAST(ProcStmt, node)->rtype = _cst_deserialize_index(stream);
+            /*size_t (decl in `ProcExpr:`)*/ param_len = cst_NODECAST(ProcStmt, node)->param_len = _cst_deserialize_sizet(stream);
+            cst_NODECAST(ProcStmt, node)->params = _cst_deserialize_params(param_len, stream);
             break;
         // Statements
         case IfStmt:
