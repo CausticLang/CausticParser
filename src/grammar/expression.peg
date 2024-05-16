@@ -1,4 +1,7 @@
-expression <- n:ternary { $$ = n; }
+expression <- n:proc_expr_ { $$ = n; }
+
+proc_expr_ <- n:proc_expr { $$ = n; }
+            / n:ternary { $$ = n; }
 
 ternary <-
     c:disjunction _ '?' _

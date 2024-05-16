@@ -1,0 +1,62 @@
+PROC <- 'proc'
+
+proc_expr <-
+    PROC
+    _ '<' ~ { _cap_ERROR("proc_expr", "Expected '<' after 'proc'"); }
+    _ t:identifier ~ { _cap_ERROR("proc_expr", "Expected type after '<'"); }
+    _ '>' ~ { _cap_ERROR("proc_expr", "Expected closing '>'"); }
+    {
+        cap_ps_push(auxil);
+        auxil->stack->mark = PROC_PARAMS;
+        auxil->stack->nodes = cst_ninit_ProcExpr((struct cst_nProcExpr*)malloc(sizeof(struct cst_nProcExpr)), $0s, $0e, t, NULL, 0);
+    }
+    _ '(' _ proc_params? _ ')' ~ { _cap_ERROR("proc_expr", "Expected closing ')'"); } {
+        _cap_ADDNODE((struct cst_nProcExpr*)cap_ps_pop(auxil));
+        $$ = _cap_LASTNODE;
+    }
+
+proc_params <-
+    !'/' ~ { _cap_ERROR("proc_params", "Pos-only mark '/' must be preceded by parameters"); }
+    ( proc_posonly_params _ ( ',' _ proc_posorkw_params )? ( ',' _ proc_kwonly_params )? _ ','?
+    / proc_posorkw_params _ ( ',' _ proc_kwonly_params )? _ ','?
+    / proc_kwonly_params _ ','? )
+
+proc_posonly_params <-
+    ( proc_posonly_param _ ',' )+ '/'
+
+proc_posorkw_params <-
+    proc_posorkw_param ( _ ',' _ proc_posorkw_param )*
+
+proc_kwonly_params <-
+    '*' _ ',' ~ { _cap_ERROR("proc_kwonly_params", "Expected ',' after '*'"); }
+    proc_posorkw_param ~ { _cap_ERROR("proc_kwonly_params", "Expected parameter after ','"); }
+    ( _ ',' _ proc_posorkw_param )*
+
+
+proc_posonly_param <-
+    t:identifier _ n:identifier ~ { _cap_ERROR("proc_posonly_param", "Expected identifier"); }
+    ( _ '=' _ d:expression ~ { _cap_ERROR("proc_posonly_param", "Expected expression after '='"); } {
+        assert(auxil->stack->mark == PROC_PARAMS);
+        cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), POS_ONLY, t, n, true, d); }
+    / {
+        assert(auxil->stack->mark == PROC_PARAMS);
+        //cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), POS_ONLY, t, n, false, 0);
+      } )
+proc_posorkw_param <-
+    t:identifier _ n:identifier ~ { _cap_ERROR("proc_posorkw_param", "Expected identifier"); }
+    ( _ '=' _ d:expression ~ { _cap_ERROR("proc_posorkw_param", "Expected expression after '='"); } {
+        assert(auxil->stack->mark == PROC_PARAMS);
+        cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), POS_OR_KW, t, n, true, d); }
+    / {
+        assert(auxil->stack->mark == PROC_PARAMS);
+        cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), POS_OR_KW, t, n, false, 0);
+      } )
+proc_kwonly_param <-
+    t:identifier _ n:identifier ~ { _cap_ERROR("proc_kwonly_param", "Expected identifier"); }
+    ( _ '=' _ d:expression ~ { _cap_ERROR("proc_kwonly_param", "Expected expression after '='"); } {
+        assert(auxil->stack->mark == PROC_PARAMS);
+        cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), KW_ONLY, t, n, true, d); }
+    / {
+        assert(auxil->stack->mark == PROC_PARAMS);
+        cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), KW_ONLY, t, n, false, 0);
+      } )

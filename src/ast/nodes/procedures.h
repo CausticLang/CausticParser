@@ -41,3 +41,12 @@ cst_MKNODETYPE(ProcStmt,
         n->params = params;
         n->param_len = param_len;
     }, cst_index name, cst_index rtype, struct cst_ProcParam* params, size_t param_len);
+
+#define cst_PROC_ADD_PARAM(node, pt, t, n, hd, d) do { \
+    (node)->params = realloc((node)->params, (++(node)->param_len)*sizeof(struct cst_ProcParam)); \
+    (node)->params[(node)->param_len-1].type = t; \
+    (node)->params[(node)->param_len-1].name = n; \
+    (node)->params[(node)->param_len-1].val = d; \
+    (node)->params[(node)->param_len-1].has_default = hd; \
+    (node)->params[(node)->param_len-1].param_type = pt; \
+} while(0)
