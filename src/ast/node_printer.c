@@ -26,6 +26,9 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
                 printf("- " fmt "%s", cst_NODECAST(type, node)->var[i], suffix); \
             } } while(0)
         // Control
+        case Entrypoint:
+            _cst_NODEPRINTTOP(Entrypoint, "node[noderef]: %u", node);
+            break;
         case Block:
             _cst_NODEPRINTTOP(Block, "node_count[int]: %d", node_count);
             _cst_NODEPRINTSUBLIST(Block, "nodes[noderef*]:", nodes, node_count, "%u");

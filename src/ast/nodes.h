@@ -9,8 +9,8 @@
 typedef unsigned int cst_index;
 
 enum cst_NodeType {
-    _NULL = 0, // illegal node
     // Control
+    Entrypoint = 0,
     Block = 16,
     // Expressions
     /// Atoms
@@ -70,6 +70,7 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
 #define cst_NODECAST(type, node) ((struct cst_n##type*)node)
 #define cst_NODEDOWNCAST(node) ((struct cst_NodeBase*)node)
 
+cst_MKNODETYPE_S(Entrypoint, cst_index, node);
 
 #include "nodes/atoms.h"
 #include "nodes/block.h"
