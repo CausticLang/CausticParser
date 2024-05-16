@@ -1,4 +1,6 @@
-line_statement <- illegal_stmt
+line_statement <-
+    illegal_stmt
+  / s:dowhile_stmt { $$ = s; }
 
 block_statement <-
     illegal_stmt
@@ -44,13 +46,15 @@ for_stmt <-
     }
 
 while_stmt <-
-    'do' _ b:body ~ { _cap_ERROR("while_stmt", "Expected do-while body after 'do'"); }
-    _ c:while_cond ~ { _cap_ERROR("while_stmt", "Expected 'while'"); } {
-        _cap_ADDNODE(_cap_MKINITNODE(WhileStmt, c, b, true));
-        $$ = _cap_LASTNODE;
-    } EOL ~ { _cap_ERROR("while_stmt", "Expected EOL ';' after while condition part of do-while"); }
-  / c:while_cond _ b:body ~ { _cap_ERROR("while_stmt", "Expected while body"); } {
+    c:while_cond _ b:body ~ { _cap_ERROR("while_stmt", "Expected while body"); } {
         _cap_ADDNODE(_cap_MKINITNODE(WhileStmt, c, b, false));
+        $$ = _cap_LASTNODE;
+    }
+
+dowhile_stmt <-
+    'do' _ b:body ~ { _cap_ERROR("dowhile_stmt", "Expected do-while body after 'do'"); }
+    _ c:while_cond ~ { _cap_ERROR("dowhile_stmt", "Expected 'while'"); } {
+        _cap_ADDNODE(_cap_MKINITNODE(WhileStmt, c, b, true));
         $$ = _cap_LASTNODE;
     }
 
