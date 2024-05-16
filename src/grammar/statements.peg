@@ -7,6 +7,7 @@ block_statement <-
   / s:if_stmt { $$ = s; }
   / s:for_stmt { $$ = s; }
   / s:while_stmt { $$ = s; }
+  / s:proc_stmt { $$ = s; }
 
 illegal_stmt <-
     'elif' { _cap_ERROR("statement", "Unexpected 'elif'"); }

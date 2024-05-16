@@ -15,6 +15,22 @@ proc_expr <-
         $$ = _cap_LASTNODE;
     }
 
+proc_stmt <-
+    PROC _
+    ( '<' _ t:identifier ~ { _cap_ERROR("proc_stmt", "Expected type after '<'"); }
+      _ '>' ~ { _cap_ERROR("proc_stmt", "Expected closing '>'"); }
+    / t:identifier ) ~ { _cap_ERROR("proc_stmt", "Expected either identifier or '<' for procedure statement type"); }
+    _ n:identifier ~ { _cap_ERROR("proc_stmt", "Expected identifier after procedure statement type"); }
+    {
+        cap_ps_push(auxil);
+        auxil->stack->mark = PROC_PARAMS;
+        auxil->stack->nodes = cst_ninit_ProcStmt((struct cst_nProcStmt*)malloc(sizeof(struct cst_nProcStmt)), $0s, $0e, n, t, NULL, 0);
+    }
+    _ '(' _ proc_params? _ ')' ~ { _cap_ERROR("proc_stmt", "Expected closing ')'"); } {
+        _cap_ADDNODE((struct cst_nProcStmt*)cap_ps_pop(auxil));
+        $$ = _cap_LASTNODE;
+    }
+
 proc_params <-
     !'/' ~ { _cap_ERROR("proc_params", "Pos-only mark '/' must be preceded by parameters"); }
     ( proc_posonly_params _ ( ',' _ proc_posorkw_params )? ( ',' _ proc_kwonly_params )? _ ','?
