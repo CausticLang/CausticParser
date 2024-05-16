@@ -129,6 +129,20 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_sizet(cst_NODECAST(ProcExpr, node)->param_len, stream);
             _cst_serialize_params(cst_NODECAST(ProcExpr, node)->params, cst_NODECAST(ProcExpr, node)->param_len, stream);
             break;
+        // Statements
+        case IfStmt:
+            _cst_serialize_index(cst_NODECAST(IfStmt, node)->condition, stream);
+            _cst_serialize_index(cst_NODECAST(IfStmt, node)->body, stream);
+            _cst_serialize_index(cst_NODECAST(IfStmt, node)->next, stream);
+            break;
+        case ElIfStmt:
+            _cst_serialize_index(cst_NODECAST(ElIfStmt, node)->condition, stream);
+            _cst_serialize_index(cst_NODECAST(ElIfStmt, node)->body, stream);
+            _cst_serialize_index(cst_NODECAST(ElIfStmt, node)->next, stream);
+            break;
+        case ElseStmt:
+            _cst_serialize_index(cst_NODECAST(ElseStmt, node)->body, stream);
+            break;
         // Default
         default: assert(false);
     }
@@ -253,6 +267,23 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             cst_NODECAST(ProcExpr, node)->rtype = _cst_deserialize_index(stream);
             size_t param_len = cst_NODECAST(ProcExpr, node)->param_len = _cst_deserialize_sizet(stream);
             cst_NODECAST(ProcExpr, node)->params = _cst_deserialize_params(param_len, stream);
+            break;
+        // Statements
+        case IfStmt:
+            _cst_ALLOCNODE(IfStmt);
+            cst_NODECAST(IfStmt, node)->condition = _cst_deserialize_index(stream);
+            cst_NODECAST(IfStmt, node)->body = _cst_deserialize_index(stream);
+            cst_NODECAST(IfStmt, node)->next = _cst_deserialize_index(stream);
+            break;
+        case ElIfStmt:
+            _cst_ALLOCNODE(ElIfStmt);
+            cst_NODECAST(ElIfStmt, node)->condition = _cst_deserialize_index(stream);
+            cst_NODECAST(ElIfStmt, node)->body = _cst_deserialize_index(stream);
+            cst_NODECAST(ElIfStmt, node)->next = _cst_deserialize_index(stream);
+            break;
+        case ElseStmt:
+            _cst_ALLOCNODE(ElseStmt);
+            cst_NODECAST(ElseStmt, node)->body = _cst_deserialize_index(stream);
             break;
         // Default
         default: assert(false);
