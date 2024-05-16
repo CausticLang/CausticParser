@@ -1,6 +1,6 @@
 struct cst_nBlock {
     struct cst_NodeBase _base;
-    int node_count;
+    size_t node_count;
     cst_index* nodes;
 };
 struct cst_nBlock* cst_ninit_Block(struct cst_nBlock* n, unsigned int p_start, unsigned int p_end) {

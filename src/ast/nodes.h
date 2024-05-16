@@ -43,7 +43,7 @@ struct cst_NodeBase {
 };
 
 struct cst_Root {
-    int node_count;
+    size_t node_count;
     struct cst_NodeBase** nodes;
 };
 
