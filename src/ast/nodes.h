@@ -36,6 +36,7 @@ enum cst_NodeType {
     IfStmt = 17,
     ElIfStmt = 18,
     ElseStmt = 19,
+    ForStmt = 20,
 };
 
 struct cst_NodeBase {

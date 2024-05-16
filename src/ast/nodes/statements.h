@@ -11,3 +11,11 @@ cst_MKNODETYPE(ElIfStmt, cst_index condition; cst_index body; cst_index next;, {
 }, cst_index condition, cst_index body, cst_index next);
 
 cst_MKNODETYPE_S(ElseStmt, cst_index, body);
+
+
+cst_MKNODETYPE(ForStmt, cst_index init; cst_index cond; cst_index iter; cst_index body;, {
+    n->init = init;
+    n->cond = cond;
+    n->iter = iter;
+    n->body = body;
+}, cst_index init, cst_index cond, cst_index iter, cst_index body);
