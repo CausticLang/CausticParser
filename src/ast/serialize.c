@@ -9,17 +9,25 @@
 
 #define _cst_genserialize(name, plural, type) \
     static inline void _cst_serialize_##name(type val, FILE* stream) { \
+        if (cst_SERIALIZE_DEBUG) \
+            fprintf(stderr, "serialize debug: write " #type " of size %d to stream\n", sizeof(type)); \
         fwrite(&val, sizeof(type), 1, stream); \
     } \
     static inline void _cst_serialize_##plural(type* vals, size_t count, FILE* stream) { \
+        if (cst_SERIALIZE_DEBUG) \
+            fprintf(stderr, "serialize debug: write %d of " #type " of size %d to stream\n", count, sizeof(type)); \
         fwrite(vals, sizeof(type), count, stream); \
     } \
     static inline type _cst_deserialize_##name(FILE* stream) { \
+        if (cst_SERIALIZE_DEBUG) \
+            fprintf(stderr, "serialize debug: read " #type " of size %d from stream\n", sizeof(type)); \
         type val; \
         fread(&val, sizeof(type), 1, stream); \
         return val; \
     } \
     static inline type* _cst_deserialize_##plural(size_t count, FILE* stream) { \
+        if (cst_SERIALIZE_DEBUG) \
+            fprintf(stderr, "serialize debug: read %d of " #type " of size %d from stream\n", count, sizeof(type)); \
         type* vals = malloc(count*sizeof(type)); \
         fread(vals, sizeof(type), count, stream); \
         return vals; \

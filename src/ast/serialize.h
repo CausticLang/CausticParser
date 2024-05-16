@@ -1,5 +1,6 @@
 #include "nodes.h"
 
+#define cst_SERIALIZE_DEBUG 0
 #define cst_DESERIALIZE_CHAR_BUFF_SIZE 16
 
 void cst_serialize_to(struct cst_Root* root, FILE* stream);
