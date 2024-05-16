@@ -20,7 +20,7 @@
 
 void cap_error(struct cap_ParserState* state, cap_context_t* ctx, const char* rule, const char* msg, unsigned int start_pos, unsigned int end_pos) {
     if (!state->config.suppress_error_msgs) {
-        unsigned int cno = cap_cno(state, start_pos);
+        unsigned int cno = cap_cno(state, end_pos);
         fprintf(cap_ERROR_STREAM, "Syntax error (%s) at l%u:c%u: %s\n", //----------------------------------------\n",
                 rule, cap_lno(state), cno, msg);
         // Print source
