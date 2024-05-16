@@ -4,6 +4,7 @@ block_statement <-
     illegal_stmt
   / s:if_stmt { $$ = s; }
   / s:for_stmt { $$ = s; }
+  / s:while_stmt { $$ = s; }
 
 illegal_stmt <-
     'elif' { _cap_ERROR("statement", "Unexpected 'elif'"); }
@@ -41,3 +42,17 @@ for_stmt <-
         _cap_ADDNODE(_cap_MKINITNODE(ForStmt, init, cond, iter, body));
         $$ = _cap_LASTNODE;
     }
+
+while_stmt <-
+    'do' _ b:body ~ { _cap_ERROR("while_stmt", "Expected do-while body after 'do'"); }
+    _ c:while_cond ~ { _cap_ERROR("while_stmt", "Expected 'while'"); } {
+        _cap_ADDNODE(_cap_MKINITNODE(WhileStmt, c, b, true));
+        $$ = _cap_LASTNODE;
+    } EOL ~ { _cap_ERROR("while_stmt", "Expected EOL ';' after while condition part of do-while"); }
+  / c:while_cond _ b:body ~ { _cap_ERROR("while_stmt", "Expected while body"); } {
+        _cap_ADDNODE(_cap_MKINITNODE(WhileStmt, c, b, false));
+        $$ = _cap_LASTNODE;
+    }
+
+while_cond <-
+    'while' _ c:expression ~ { _cap_ERROR("while_cond", "Expected expression after 'while'"); } { $$ = c; }
