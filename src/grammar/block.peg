@@ -2,7 +2,7 @@ EOL <- ';'
 
 block <-
     '{'
-        i:block_inner { $$ = i; }
+    _ i:block_inner { $$ = i; } _
     '}' ~ { _cap_ERROR("block", "Expected closing '}' after block"); }
 
 block_inner <-
@@ -20,8 +20,8 @@ block_inner <-
 
 line_inner <-
     (
-        s:block EOL?
-      / s:expression EOL ~ { _cap_ERROR("line_inner", "Expected EOL (;)"); }
+        s:block _ EOL?
+      / s:expression _ EOL ~ { _cap_ERROR("line_inner", "Expected EOL (;)"); }
     )
     {
         cst_nBlock_addnode(auxil->stack->nodes, s);
