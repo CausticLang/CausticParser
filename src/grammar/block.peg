@@ -19,10 +19,11 @@ block_inner <-
     }
 
 line_inner <-
-    (
-        s:block _ EOL?
-      / s:expression _ EOL ~ { _cap_ERROR("line_inner", "Expected EOL (;)"); }
-    )
-    {
+    s:body {
         cst_nBlock_addnode(auxil->stack->nodes, s);
-    }
+    } / EOL
+
+body <-
+    ( ( n:block / n:block_statement ) EOL?
+    / ( n:line_statement / n:expression ) EOL ~ { _cap_ERROR("body", "Expected EOL ';'"); } )
+    { $$ = n; }
