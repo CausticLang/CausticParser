@@ -10,6 +10,8 @@ typedef unsigned int cst_index;
 
 enum cst_NodeType {
     _NULL = 0, // illegal node
+    // Control
+    Block = 16,
     // Expressions
     /// Atoms
     Identifier = 1,
@@ -70,6 +72,7 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
 
 
 #include "nodes/atoms.h"
+#include "nodes/block.h"
 #include "nodes/access.h"
 #include "nodes/operators.h"
 #include "nodes/procedures.h"
