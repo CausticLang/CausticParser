@@ -33,6 +33,9 @@ enum cst_NodeType {
     ProcExpr = 14,
     // Statements
     ProcStmt = 15,
+    IfStmt = 17,
+    ElIfStmt = 18,
+    ElseStmt = 19,
 };
 
 struct cst_NodeBase {
@@ -72,11 +75,12 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
 
 cst_MKNODETYPE_S(Entrypoint, cst_index, node);
 
+#include "nodes/access.h"
 #include "nodes/atoms.h"
 #include "nodes/block.h"
-#include "nodes/access.h"
 #include "nodes/operators.h"
 #include "nodes/procedures.h"
+#include "nodes/statements.h"
 
 
 #endif

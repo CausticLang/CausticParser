@@ -107,6 +107,20 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
                 printf("  param_type: %d%s", cst_NODECAST(ProcExpr, node)->params[i].param_type, suffix);
             }
             break;
+        // Statements
+        case IfStmt:
+            _cst_NODEPRINTTOP(IfStmt, "condition[noderef]: %u", condition);
+            _cst_NODEPRINTSUB(IfStmt, "body[noderef]: %u", body);
+            _cst_NODEPRINTSUB(IfStmt, "next[noderef]: %u", next);
+            break;
+        case ElIfStmt:
+            _cst_NODEPRINTTOP(ElIfStmt, "condition[noderef]: %u", condition);
+            _cst_NODEPRINTSUB(ElIfStmt, "body[noderef]: %u", body);
+            _cst_NODEPRINTSUB(ElIfStmt, "next[noderef]: %u", next);
+            break;
+        case ElseStmt:
+            _cst_NODEPRINTTOP(ElseStmt, "body[noderef]: %u", body);
+            break;
         // Fail
         default: assert(false);
         #undef _cst_NODEPRINTTOP
