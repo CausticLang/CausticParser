@@ -40,7 +40,7 @@ proc_posonly_param <-
         cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), POS_ONLY, t, n, true, d); }
     / {
         assert(auxil->stack->mark == PROC_PARAMS);
-        //cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), POS_ONLY, t, n, false, 0);
+        cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->nodes), POS_ONLY, t, n, false, 0);
       } )
 proc_posorkw_param <-
     t:identifier _ n:identifier ~ { _cap_ERROR("proc_posorkw_param", "Expected identifier"); }
