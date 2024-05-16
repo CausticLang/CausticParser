@@ -2,43 +2,46 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <stdint.h>
 #include <string.h>
 #include <malloc.h>
 #include <stdbool.h>
 
 
-#define _cst_genserialize(name, plural, type) \
-    static inline void _cst_serialize_##name(type val, FILE* stream) { \
+#define _cst_GENSERIALIZE(name, plural, ftype, ttype) \
+    static inline void _cst_serialize_##name(ftype val, FILE* stream) { \
         if (cst_SERIALIZE_DEBUG) \
-            fprintf(stderr, "serialize debug: write " #type " of size %d to stream\n", sizeof(type)); \
-        fwrite(&val, sizeof(type), 1, stream); \
+            fprintf(stderr, "serialize debug: write " #ftype " of size %d as " #ttype " of size %d to stream\n", sizeof(ftype), sizeof(ttype)); \
+        fwrite((ttype*)&val, sizeof(ttype), 1, stream); \
     } \
-    static inline void _cst_serialize_##plural(type* vals, size_t count, FILE* stream) { \
+    static inline void _cst_serialize_##plural(ftype* vals, size_t count, FILE* stream) { \
         if (cst_SERIALIZE_DEBUG) \
-            fprintf(stderr, "serialize debug: write %d of " #type " of size %d to stream\n", count, sizeof(type)); \
-        fwrite(vals, sizeof(type), count, stream); \
+            fprintf(stderr, "serialize debug: write %d of " #ftype " of size %d as " #ttype " of size %d to stream\n", count, sizeof(ftype), sizeof(ttype)); \
+        fwrite((ttype*)vals, sizeof(ttype), count, stream); \
     } \
-    static inline type _cst_deserialize_##name(FILE* stream) { \
+    static inline ftype _cst_deserialize_##name(FILE* stream) { \
         if (cst_SERIALIZE_DEBUG) \
-            fprintf(stderr, "serialize debug: read " #type " of size %d from stream\n", sizeof(type)); \
-        type val; \
-        fread(&val, sizeof(type), 1, stream); \
-        return val; \
+            fprintf(stderr, "serialize debug: read " #ftype " of size %d as " #ttype " of size %d from stream\n", sizeof(ftype), sizeof(ttype)); \
+        ftype val; \
+        fread((ftype*)&val, sizeof(ttype), 1, stream); \
+        return (ttype)val; \
     } \
-    static inline type* _cst_deserialize_##plural(size_t count, FILE* stream) { \
+    static inline ftype* _cst_deserialize_##plural(size_t count, FILE* stream) { \
         if (cst_SERIALIZE_DEBUG) \
-            fprintf(stderr, "serialize debug: read %d of " #type " of size %d from stream\n", count, sizeof(type)); \
-        type* vals = malloc(count*sizeof(type)); \
-        fread(vals, sizeof(type), count, stream); \
-        return vals; \
+            fprintf(stderr, "serialize debug: read %d of " #ftype " of size %d as " #ttype " of size %d from stream\n", count, sizeof(ftype), sizeof(ttype)); \
+        ttype* vals = malloc(count*sizeof(ttype)); \
+        fread(vals, sizeof(ttype), count, stream); \
+        return (ftype*)vals; \
     }
 
-_cst_genserialize(bool, bools, bool);
-_cst_genserialize(int, ints, int);
-_cst_genserialize(uint, uints, unsigned int);
-_cst_genserialize(sizet, sizets, size_t);
-_cst_genserialize(index, indexes, cst_index);
-_cst_genserialize(kwarg, kwargs, struct cst_ProcKwarg);
+_cst_GENSERIALIZE(bool, bools, bool, bool);
+_cst_GENSERIALIZE(int, ints, int, int16_t);
+_cst_GENSERIALIZE(uint, uints, unsigned int, uint16_t);
+_cst_GENSERIALIZE(sizet, sizets, size_t, uint16_t);
+_cst_GENSERIALIZE(index, indexes, cst_index, uint16_t);
+_cst_GENSERIALIZE(kwarg, kwargs, struct cst_ProcKwarg, struct cst_ProcKwarg);
+
+#undef _cst_GENSERIALIZE
 
 static inline void _cst_serialize_chars(char* val, FILE* stream) {
     fputs(val, stream);
@@ -60,7 +63,7 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_index(cst_NODECAST(Entrypoint, node)->node, stream);
             break;
         case Block:
-            _cst_serialize_int(cst_NODECAST(Block, node)->node_count, stream);
+            _cst_serialize_sizet(cst_NODECAST(Block, node)->node_count, stream);
             _cst_serialize_indexes(cst_NODECAST(Block, node)->nodes, cst_NODECAST(Block, node)->node_count, stream);
             break;
         // Atoms
@@ -157,6 +160,9 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
     unsigned int pos_start = _cst_deserialize_uint(stream);
     unsigned int pos_end = _cst_deserialize_uint(stream);
     // Type
+    #if cst_SERIALIZE_DEBUG
+        fprintf(stderr, "serialize debug: deserializing type %u\n", type);
+    #endif
     switch (type) {
         #define _cst_ALLOCNODE(type) node = cst_NODEDOWNCAST(malloc(sizeof(struct cst_n##type)))
         // Control
@@ -166,7 +172,7 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             break;
         case Block:
             _cst_ALLOCNODE(Block);
-            size_t ncount = cst_NODECAST(Block, node)->node_count = _cst_deserialize_int(stream);
+            size_t ncount = cst_NODECAST(Block, node)->node_count = _cst_deserialize_sizet(stream);
             cst_NODECAST(Block, node)->nodes = _cst_deserialize_indexes(ncount, stream);
             break;
         // Atoms
