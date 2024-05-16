@@ -19,3 +19,9 @@ cst_MKNODETYPE(ForStmt, cst_index init; cst_index cond; cst_index iter; cst_inde
     n->iter = iter;
     n->body = body;
 }, cst_index init, cst_index cond, cst_index iter, cst_index body);
+
+cst_MKNODETYPE(WhileStmt, cst_index cond; cst_index body; bool do_while;, {
+    n->cond = cond;
+    n->body = body;
+    n->do_while = do_while;
+}, cst_index cond, cst_index body, bool do_while);

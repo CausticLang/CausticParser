@@ -149,6 +149,11 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_index(cst_NODECAST(ForStmt, node)->iter, stream);
             _cst_serialize_index(cst_NODECAST(ForStmt, node)->body, stream);
             break;
+        case WhileStmt:
+            _cst_serialize_index(cst_NODECAST(WhileStmt, node)->cond, stream);
+            _cst_serialize_index(cst_NODECAST(WhileStmt, node)->body, stream);
+            _cst_serialize_bool(cst_NODECAST(WhileStmt, node)->do_while, stream);
+            break;
         // Default
         default: assert(false);
     }
@@ -297,6 +302,12 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             cst_NODECAST(ForStmt, node)->cond = _cst_deserialize_index(stream);
             cst_NODECAST(ForStmt, node)->iter = _cst_deserialize_index(stream);
             cst_NODECAST(ForStmt, node)->body = _cst_deserialize_index(stream);
+            break;
+        case WhileStmt:
+            _cst_ALLOCNODE(WhileStmt);
+            cst_NODECAST(WhileStmt, node)->cond = _cst_deserialize_index(stream);
+            cst_NODECAST(WhileStmt, node)->body = _cst_deserialize_index(stream);
+            cst_NODECAST(WhileStmt, node)->do_while = _cst_deserialize_bool(stream);
             break;
         // Default
         default: assert(false);
