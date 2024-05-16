@@ -12,7 +12,7 @@ void cst_free_node(struct cst_NodeBase* node) {
         case Bool:
         case UnaryOp: case BinaryOp: case TernaryOp:
         case Attribute: case Subscript:
-        case IfStmt: case ElIfStmt: case ElseStmt:
+        case IfStmt: case ElIfStmt: case ElseStmt: case ForStmt:
             break; // no freeing needed
         case Block:
             free(cst_NODECAST(Block, node)->nodes);

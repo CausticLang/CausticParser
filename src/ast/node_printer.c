@@ -121,6 +121,12 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
         case ElseStmt:
             _cst_NODEPRINTTOP(ElseStmt, "body[noderef]: %u", body);
             break;
+        case ForStmt:
+            _cst_NODEPRINTTOP(ForStmt, "init[noderef]: %u", init);
+            _cst_NODEPRINTSUB(ForStmt, "cond[noderef]: %u", cond);
+            _cst_NODEPRINTSUB(ForStmt, "iter[noderef]: %u", iter);
+            _cst_NODEPRINTSUB(ForStmt, "body[noderef]: %u", body);
+            break;
         // Fail
         default: assert(false);
         #undef _cst_NODEPRINTTOP
