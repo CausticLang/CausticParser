@@ -40,6 +40,7 @@ _cst_GENSERIALIZE(uint, uints, unsigned int, uint16_t);
 _cst_GENSERIALIZE(sizet, sizets, size_t, uint16_t);
 _cst_GENSERIALIZE(index, indexes, cst_index, uint16_t);
 _cst_GENSERIALIZE(kwarg, kwargs, struct cst_ProcKwarg, struct cst_ProcKwarg);
+_cst_GENSERIALIZE(param, params, struct cst_ProcParam, struct cst_ProcParam);
 
 #undef _cst_GENSERIALIZE
 
@@ -122,6 +123,11 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
                 _cst_serialize_index(cst_NODECAST(ProcInvoke, node)->kwargs[i]->key, stream);
                 _cst_serialize_index(cst_NODECAST(ProcInvoke, node)->kwargs[i]->val, stream);
             }
+            break;
+        case ProcExpr:
+            _cst_serialize_index(cst_NODECAST(ProcExpr, node)->rtype, stream);
+            _cst_serialize_sizet(cst_NODECAST(ProcExpr, node)->param_len, stream);
+            _cst_serialize_params(cst_NODECAST(ProcExpr, node)->params, cst_NODECAST(ProcExpr, node)->param_len, stream);
             break;
         // Default
         default: assert(false);
@@ -241,6 +247,12 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
                 cst_NODECAST(ProcInvoke, node)->kwargs[i]->key = _cst_deserialize_index(stream);
                 cst_NODECAST(ProcInvoke, node)->kwargs[i]->val = _cst_deserialize_index(stream);
             }
+            break;
+        case ProcExpr:
+            _cst_ALLOCNODE(ProcExpr);
+            cst_NODECAST(ProcExpr, node)->rtype = _cst_deserialize_index(stream);
+            size_t param_len = cst_NODECAST(ProcExpr, node)->param_len = _cst_deserialize_sizet(stream);
+            cst_NODECAST(ProcExpr, node)->params = _cst_deserialize_params(param_len, stream);
             break;
         // Default
         default: assert(false);
