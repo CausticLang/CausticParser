@@ -211,6 +211,12 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             size_t arglen = cst_NODECAST(ProcInvoke, node)->arglen = _cst_deserialize_sizet(stream);
             cst_NODECAST(ProcInvoke, node)->args = _cst_deserialize_indexes(arglen, stream);
             size_t kwarglen = cst_NODECAST(ProcInvoke, node)->kwarglen = _cst_deserialize_sizet(stream);
+            cst_NODECAST(ProcInvoke, node)->kwargs = malloc(sizeof(struct cst_ProcKwarg*) * kwarglen);
+            for (int i = 0; i < cst_NODECAST(ProcInvoke, node)->kwarglen; i++) {
+                cst_NODECAST(ProcInvoke, node)->kwargs[i] = malloc(sizeof(struct cst_ProcKwarg));
+                cst_NODECAST(ProcInvoke, node)->kwargs[i]->key = _cst_deserialize_index(stream);
+                cst_NODECAST(ProcInvoke, node)->kwargs[i]->val = _cst_deserialize_index(stream);
+            }
             break;
         // Default
         default: assert(false);
