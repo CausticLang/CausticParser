@@ -94,7 +94,10 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
 #define cst_NODECAST(type, node) ((struct cst_n##type*)node)
 #define cst_NODEDOWNCAST(node) ((struct cst_NodeBase*)node)
 
-cst_MKNODETYPE_S(Entrypoint, cst_index, node);
+cst_MKNODETYPE(Entrypoint, unsigned int eof_pos; cst_index node;, {
+    n->eof_pos = eof_pos;
+    n->node = node;
+}, unsigned int eof_pos, cst_index node);
 
 cst_MKNODETYPE(ExtraData, char* meta; char* data; bool static_meta;, {
     n->meta = meta;

@@ -20,12 +20,14 @@
 }
 
 _start <-
-    { $$ = 0; _cap_ADDNODE(_cap_MKINITNODE(Entrypoint, 0)); }
+    { $$ = 0; _cap_ADDNODE(_cap_MKINITNODE(Entrypoint, 0, 0)); }
     _ n:block_inner {
         cst_NODECAST(Entrypoint, auxil->root->nodes[0])->node = n;
         auxil->root->nodes[0]->pos_end = $0e;
     }
-    _ EOF ~ { _cap_ERROR("_start", "Expected EOF"); }
+    _ EOF ~ { _cap_ERROR("_start", "Expected EOF"); } {
+        cst_NODECAST(Entrypoint, auxil->root->nodes[0])->eof_pos = $0e;
+    }
 
 %import "grammar/access.peg"
 %import "grammar/atoms.peg"

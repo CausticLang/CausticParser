@@ -27,7 +27,8 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             } } while(0)
         // Control
         case Entrypoint:
-            _cst_NODEPRINTTOP(Entrypoint, "node[noderef]: %u", node);
+            _cst_NODEPRINTTOP(Entrypoint, "eof_pos[int]: %u", eof_pos);
+            _cst_NODEPRINTSUB(Entrypoint, "node[noderef]: %u", node);
             break;
         case ExtraData:
             _cst_NODEPRINTTOP(ExtraData, "meta[char*]: %s", meta);

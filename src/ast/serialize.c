@@ -62,6 +62,7 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
     switch (node->type) {
         // Control
         case Entrypoint:
+            _cst_serialize_uint(cst_NODECAST(Entrypoint, node)->eof_pos, stream);
             _cst_serialize_index(cst_NODECAST(Entrypoint, node)->node, stream);
             break;
         case ExtraData:
@@ -245,6 +246,7 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
         // Control
         case Entrypoint:
             _cst_ALLOCNODE(Entrypoint);
+            cst_NODECAST(Entrypoint, node)->eof_pos = _cst_deserialize_uint(stream);
             cst_NODECAST(Entrypoint, node)->node = _cst_deserialize_index(stream);
             break;
         case ExtraData:
