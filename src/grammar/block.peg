@@ -24,6 +24,7 @@ line_inner <-
     } / EOL
 
 body <-
-    ( ( n:block / n:block_statement ) EOL?
-    / ( n:line_statement / n:expression ) EOL ~ { _cap_ERROR("body", "Expected EOL ';'"); } )
+    ( ( n:block / n:block_statement ) _ EOL?
+    / ( n:line_statement _ EOL ~ { _cap_ERROR("body", "Expected EOL ';' after line-statement"); }
+      / n:expression _ EOL ~ { _cap_ERROR("body", "Expected EOL ';' after expression"); } ) )
     { $$ = n; }

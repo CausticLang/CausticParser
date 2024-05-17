@@ -84,7 +84,7 @@ flowctl_stmt <-
 
 
 declare_stmt <-
-    t:type _ n:identifier ~ { _cap_ERROR("declare_stmt", "Expected identifier after type"); }
+    t:type _ n:identifier
     ( _ '=' _ v:expression ~ { _cap_ERROR("declare_stmt", "Expected expression after '='"); } )? {
         _cap_ADDNODE(_cap_MKINITNODE(Declaration, t, n, v));
         $$ = _cap_LASTNODE;
