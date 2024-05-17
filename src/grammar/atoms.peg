@@ -7,11 +7,11 @@ identifier <- !keyword ~ { _cap_ERROR("identifier", "Cannot use a reserved keywo
 }
 
 bool_literal <-
-    'TRUE' {
+    TRUE_KW {
         _cap_ADDNODE(_cap_MKINITNODE(Bool, true));
         $$ = _cap_LASTNODE;
     }
-  / 'FALSE' {
+  / FALSE_KW {
         _cap_ADDNODE(_cap_MKINITNODE(Bool, false));
         $$ = _cap_LASTNODE;
     }
