@@ -125,6 +125,7 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
                 _cst__NODEPRINTSUB(ProcExpr, "params[ProcParam*]:");
                 printf("  param_type: %d%s", cst_NODECAST(ProcExpr, node)->params[i].param_type, suffix);
             }
+            _cst_NODEPRINTSUB(ProcExpr, "body[noderef]: %u", body);
             break;
         case ProcStmt:
             _cst_NODEPRINTTOP(ProcStmt, "name[noderef]: %u", name);
@@ -144,6 +145,7 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
                 _cst__NODEPRINTSUB(ProcStmt, "params[ProcParam*]:");
                 printf("  param_type: %d%s", cst_NODECAST(ProcStmt, node)->params[i].param_type, suffix);
             }
+            _cst_NODEPRINTSUB(ProcStmt, "body[noderef]: %u", body);
             break;
         // Statements
         case IfStmt:

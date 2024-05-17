@@ -24,23 +24,27 @@ struct cst_ProcParam {
 
 cst_MKNODETYPE(ProcExpr,
     cst_index rtype;
-    struct cst_ProcParam* params; size_t param_len;,
+    struct cst_ProcParam* params; size_t param_len;
+    cst_index body;,
     {
         n->rtype = rtype;
         n->params = params;
         n->param_len = param_len;
-    }, cst_index rtype, struct cst_ProcParam* params, size_t param_len);
+        n->body = body;
+    }, cst_index rtype, struct cst_ProcParam* params, size_t param_len, cst_index body);
 
 cst_MKNODETYPE(ProcStmt,
     cst_index name;
     cst_index rtype;
-    struct cst_ProcParam* params; size_t param_len;,
+    struct cst_ProcParam* params; size_t param_len;
+    cst_index body;,
     {
         n->name = name;
         n->rtype = rtype;
         n->params = params;
         n->param_len = param_len;
-    }, cst_index name, cst_index rtype, struct cst_ProcParam* params, size_t param_len);
+        n->body = body;
+    }, cst_index name, cst_index rtype, struct cst_ProcParam* params, size_t param_len, cst_index body);
 
 #define cst_PROC_ADD_PARAM(node, pt, t, n, hd, d) do { \
     (node)->params = realloc((node)->params, (++(node)->param_len)*sizeof(struct cst_ProcParam)); \
