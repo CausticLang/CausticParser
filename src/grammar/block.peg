@@ -13,7 +13,7 @@ block_inner <-
         _cap_ADDNODE(auxil->stack->data);
         $$ = _cap_LASTNODE;
     }
-    line_inner*
+    ( line_inner _ )*
     {
         assert(auxil->stack->mark == BLOCK);
         cst_NODEDOWNCAST(cap_ps_pop(auxil))->pos_end = $0e;
