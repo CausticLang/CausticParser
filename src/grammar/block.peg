@@ -9,7 +9,7 @@ block_inner <-
     {
         cap_ps_push(auxil);
         auxil->stack->mark = BLOCK;
-        auxil->stack->nodes = cst_ninit_Block(malloc(sizeof(struct cst_nBlock)), $0s, $0e);
+        auxil->stack->data = cst_ninit_Block(malloc(sizeof(struct cst_nBlock)), $0s, $0e);
     }
     line_inner*
     {
@@ -20,7 +20,7 @@ block_inner <-
 
 line_inner <-
     s:body {
-        cst_nBlock_addnode(auxil->stack->nodes, s);
+        cst_nBlock_addnode(auxil->stack->data, s);
     } / EOL
 
 body <-

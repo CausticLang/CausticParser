@@ -41,8 +41,8 @@ enum cap_ParserStackMark {
 
 struct cap_ParserStack {
     struct cap_ParserStack* prev;
-    void* nodes;
-    unsigned int nodecount;
+    void* data;
+    unsigned int auxcount;
     enum cap_ParserStackMark mark;
 };
 

@@ -6,12 +6,12 @@ invoke <-
         struct cst_nProcInvoke* node = _cap_MKINITNODE(ProcInvoke, p, NULL, 0, NULL, 0);
         if (auxil->stack != NULL) {
             if (auxil->stack->mark == INVOKE_KWARGS) {
-                node->kwarglen = auxil->stack->nodecount;
+                node->kwarglen = auxil->stack->auxcount;
                 node->kwargs = (struct cst_ProcKwarg**)cap_ps_pop(auxil);
             }
             assert(auxil->stack != NULL);
             assert(auxil->stack->mark == INVOKE_ARGS);
-            node->arglen = auxil->stack->nodecount;
+            node->arglen = auxil->stack->auxcount;
             node->args = cap_ps_pop(auxil);
         }
         _cap_ADDNODE(node);
@@ -21,8 +21,8 @@ invoke <-
 invokation_arg <-
     v:expression {
         assert(auxil->stack->mark == INVOKE_ARGS);
-        auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(cst_index*) * ++auxil->stack->nodecount);
-        ((cst_index*)auxil->stack->nodes)[auxil->stack->nodecount-1] = v;
+        auxil->stack->data = realloc(auxil->stack->data, sizeof(cst_index*) * ++auxil->stack->auxcount);
+        ((cst_index*)auxil->stack->data)[auxil->stack->auxcount-1] = v;
     } _ !'='
 
 invokation_kwargs <-
@@ -33,8 +33,8 @@ invokation_kwargs <-
 invokation_kwarg <-
     k:expression _ '=' _ v:expression ~ { _cap_ERROR("invokation_kwarg", "Expected expression after '='"); } {
         assert(auxil->stack->mark == INVOKE_KWARGS);
-        auxil->stack->nodes = realloc(auxil->stack->nodes, sizeof(struct Proc_Kwarg*) * ++auxil->stack->nodecount);
+        auxil->stack->data = realloc(auxil->stack->data, sizeof(struct Proc_Kwarg*) * ++auxil->stack->auxcount);
         struct cst_ProcKwarg* kw = malloc(sizeof(struct cst_ProcKwarg));
         kw->key = k; kw->val = v;
-        ((struct cst_ProcKwarg**)auxil->stack->nodes)[auxil->stack->nodecount-1] = kw;
+        ((struct cst_ProcKwarg**)auxil->stack->data)[auxil->stack->auxcount-1] = kw;
     }
