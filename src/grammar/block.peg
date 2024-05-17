@@ -22,7 +22,10 @@ block_inner <-
 line_inner <-
     s:body {
         cst_nBlock_addnode(auxil->stack->data, s);
-    } / EOL
+    } / EOL {
+        if (auxil->config.track_empty_lines)
+            _cap_ADDNODE(_cap_MKINITNODE(ExtraData, "blank_eol", NULL, true));
+    }
 
 body <-
     ( ( n:block / n:block_statement ) _ EOL?

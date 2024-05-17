@@ -9,11 +9,13 @@ struct cap_ParserConfig {
     bool suppress_error_msgs;
     bool error_recover;
     bool track_comments;
+    bool track_empty_lines;
 };
 #define cap_DEFAULT_CONFIG { \
     .suppress_error_msgs = false, \
     .error_recover = false, \
     .track_comments = false, \
+    .track_empty_lines = false, \
 }
 struct cap_ParserLoc {
     unsigned int line;
