@@ -1,4 +1,4 @@
-enum cst_OperatorType {
+enum cst_OperatorType:char {
     // Unary
     POS, NEG, LOGINV, BITINV, INC, DEC,
     // Binary

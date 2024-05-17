@@ -10,10 +10,10 @@
 
 typedef uint16_t cst_index;
 
-enum cst_NodeType {
+enum cst_NodeType:char {
     // Control
     Entrypoint = 0,
-    ExtraData = 255,
+    ExtraData = 127,
     Block = 16,
     // Types
     Type = 24,

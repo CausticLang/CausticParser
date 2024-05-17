@@ -51,7 +51,8 @@ static inline void _cst_serialize_chars(char* val, FILE* stream) {
 
 void cst_nserialize_metadata_to(struct cst_NodeBase* node, FILE* stream) {
     assert(!node->is_freed);
-    assert(node->type < 256);
+    assert(node->type >= 0);
+    assert(node->type < 128);
     fputc((char)node->type, stream);
     _cst_serialize_uint(node->pos_start, stream);
     _cst_serialize_uint(node->pos_end, stream);
@@ -105,18 +106,21 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             break;
         // Operations
         case UnaryOp:
-            assert(cst_NODECAST(UnaryOp, node)->op < 256);
+            assert(cst_NODECAST(UnaryOp, node)->op >= 0);
+            assert(cst_NODECAST(UnaryOp, node)->op < 128);
             fputc((char)(cst_NODECAST(UnaryOp, node)->op), stream);
             _cst_serialize_index(cst_NODECAST(UnaryOp, node)->target, stream);
             break;
         case BinaryOp:
-            assert(cst_NODECAST(BinaryOp, node)->op < 256);
+            assert(cst_NODECAST(BinaryOp, node)->op >= 0);
+            assert(cst_NODECAST(BinaryOp, node)->op < 128);
             fputc((char)(cst_NODECAST(BinaryOp, node)->op), stream);
             _cst_serialize_index(cst_NODECAST(BinaryOp, node)->left, stream);
             _cst_serialize_index(cst_NODECAST(BinaryOp, node)->right, stream);
             break;
         case TernaryOp:
-            assert(cst_NODECAST(TernaryOp, node)->op < 256);
+            assert(cst_NODECAST(TernaryOp, node)->op >= 0);
+            assert(cst_NODECAST(TernaryOp, node)->op < 128);
             fputc((char)(cst_NODECAST(TernaryOp, node)->op), stream);
             _cst_serialize_index(cst_NODECAST(TernaryOp, node)->a, stream);
             _cst_serialize_index(cst_NODECAST(TernaryOp, node)->b, stream);
@@ -183,8 +187,9 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
         case PassStmt:
             break;
         case FlowControlStmt:
-            assert(cst_NODECAST(FlowControlStmt, node)->type < 256);
-            fputc((char)(cst_NODECAST(FlowControlStmt, node)->op), stream);
+            assert(cst_NODECAST(FlowControlStmt, node)->type >= 0);
+            assert(cst_NODECAST(FlowControlStmt, node)->type < 128);
+            fputc((char)(cst_NODECAST(FlowControlStmt, node)->type), stream);
             break;
         case Declaration:
             _cst_serialize_index(cst_NODECAST(Declaration, node)->type, stream);

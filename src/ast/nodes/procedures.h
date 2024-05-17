@@ -19,7 +19,7 @@ cst_MKNODETYPE(ProcInvoke,
 struct cst_ProcParam {
     cst_index type; cst_index name; cst_index val;
     bool has_default;
-    enum {POS_ONLY, POS_OR_KW, KW_ONLY} param_type;
+    enum:char {POS_ONLY, POS_OR_KW, KW_ONLY} param_type;
 };
 
 cst_MKNODETYPE(ProcExpr,
