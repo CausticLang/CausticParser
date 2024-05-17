@@ -56,6 +56,8 @@ void cst_nserialize_metadata_to(struct cst_NodeBase* node, FILE* stream) {
     fputc((char)node->type, stream);
     _cst_serialize_uint(node->pos_start, stream);
     _cst_serialize_uint(node->pos_end, stream);
+    _cst_serialize_uint(node->lineno, stream);
+    _cst_serialize_uint(node->colno, stream);
 }
 void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
     cst_nserialize_metadata_to(node, stream);
@@ -237,6 +239,8 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
     // Metadata
     unsigned int pos_start = _cst_deserialize_uint(stream);
     unsigned int pos_end = _cst_deserialize_uint(stream);
+    unsigned int lineno = _cst_deserialize_uint(stream);
+    unsigned int colno = _cst_deserialize_uint(stream);
     // Type
     #if cst_SERIALIZE_DEBUG
         fprintf(stderr, "serialize debug: deserializing type %u\n", type);
@@ -414,6 +418,8 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
     node->type = type;
     node->pos_start = pos_start;
     node->pos_end = pos_end;
+    node->lineno = lineno;
+    node->colno = colno;
     node->is_freed = false;
     return node;
 }

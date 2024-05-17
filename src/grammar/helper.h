@@ -10,7 +10,7 @@
 #define _cap_MKNODE(type) \
     (struct cst_n##type*)malloc(sizeof(struct cst_n##type))
 #define _cap_MKINITNODE(type, ...) \
-    cst_ninit_##type(_cap_MKNODE(type), _cap_PCC0s, _cap_PCC0e, __VA_ARGS__)
+    cst_ninit_##type(_cap_MKNODE(type), _cap_PCC0s, _cap_PCC0e, cap_lno(auxil), cap_cno(auxil, _cap_PCC0s), __VA_ARGS__)
 
 #define _cap_ADDNODE(node) \
     cst_node_add(auxil->root, cst_NODEDOWNCAST(node))

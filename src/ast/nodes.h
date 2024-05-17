@@ -54,6 +54,8 @@ struct cst_NodeBase {
     bool is_freed;
     unsigned int pos_start;
     unsigned int pos_end;
+    unsigned int lineno;
+    unsigned int colno;
 };
 
 struct cst_Root {
@@ -71,11 +73,13 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
         struct cst_NodeBase _base; \
         members \
     }; \
-    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, unsigned int p_start, unsigned int p_end, __VA_ARGS__) { \
+    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, unsigned int p_start, unsigned int p_end, unsigned int lno, unsigned int cno, __VA_ARGS__) { \
         cst_NODEDOWNCAST(n)->type = name; \
         cst_NODEDOWNCAST(n)->is_freed = false; \
         cst_NODEDOWNCAST(n)->pos_start = p_start; \
         cst_NODEDOWNCAST(n)->pos_end = p_end; \
+        cst_NODEDOWNCAST(n)->lineno = lno; \
+        cst_NODEDOWNCAST(n)->colno = cno; \
         body; return n; }
 
 #define cst_MKNODETYPE_S(name, mtype, mname) \
@@ -84,11 +88,13 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
     struct cst_n##name { \
         struct cst_NodeBase _base; \
     }; \
-    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, unsigned int p_start, unsigned int p_end) { \
+    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, unsigned int p_start, unsigned int p_end, unsigned int lno, unsigned int cno) { \
         cst_NODEDOWNCAST(n)->type = name; \
         cst_NODEDOWNCAST(n)->is_freed = false; \
         cst_NODEDOWNCAST(n)->pos_start = p_start; \
         cst_NODEDOWNCAST(n)->pos_end = p_end; \
+        cst_NODEDOWNCAST(n)->lineno = lno; \
+        cst_NODEDOWNCAST(n)->colno = cno; \
         return n; }
 
 #define cst_NODECAST(type, node) ((struct cst_n##type*)node)

@@ -68,7 +68,7 @@ while_cond <-
 
 
 pass_stmt <- PASS_KW {
-    _cap_ADDNODE(cst_ninit_PassStmt(_cap_MKNODE(PassStmt), $0s, $0e));
+    _cap_ADDNODE(cst_ninit_PassStmt(_cap_MKNODE(PassStmt), $0s, $0e, cap_lno(auxil), cap_cno(auxil, $0s)));
     $$ = _cap_LASTNODE;
 }
 

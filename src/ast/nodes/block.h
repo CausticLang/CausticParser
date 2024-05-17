@@ -3,11 +3,13 @@ struct cst_nBlock {
     size_t node_count;
     cst_index* nodes;
 };
-struct cst_nBlock* cst_ninit_Block(struct cst_nBlock* n, unsigned int p_start, unsigned int p_end) {
+struct cst_nBlock* cst_ninit_Block(struct cst_nBlock* n, unsigned int p_start, unsigned int p_end, unsigned int lno, unsigned int cno) {
     cst_NODEDOWNCAST(n)->type = Block;
     cst_NODEDOWNCAST(n)->is_freed = false;
     cst_NODEDOWNCAST(n)->pos_start = p_start;
     cst_NODEDOWNCAST(n)->pos_end = p_end;
+    cst_NODEDOWNCAST(n)->lineno = lno;
+    cst_NODEDOWNCAST(n)->colno = cno;
     n->node_count = 0;
     n->nodes = NULL;
     return n;

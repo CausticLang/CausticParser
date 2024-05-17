@@ -9,7 +9,7 @@ block_inner <-
     {
         cap_ps_push(auxil);
         auxil->stack->mark = BLOCK;
-        auxil->stack->data = cst_ninit_Block(malloc(sizeof(struct cst_nBlock)), $0s, 0);
+        auxil->stack->data = cst_ninit_Block(malloc(sizeof(struct cst_nBlock)), $0s, 0, cap_lno(auxil), cap_cno(auxil, $0s));
         _cap_ADDNODE(auxil->stack->data);
         $$ = _cap_LASTNODE;
     }

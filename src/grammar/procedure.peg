@@ -6,7 +6,7 @@ proc_expr <-
     {
         cap_ps_push(auxil);
         auxil->stack->mark = PROC_PARAMS;
-        auxil->stack->data = cst_ninit_ProcExpr((struct cst_nProcExpr*)malloc(sizeof(struct cst_nProcExpr)), $0s, $0e, t, NULL, 0, 0);
+        auxil->stack->data = cst_ninit_ProcExpr((struct cst_nProcExpr*)malloc(sizeof(struct cst_nProcExpr)), $0s, $0e, cap_lno(auxil), cap_cno(auxil, $0s), t, NULL, 0, 0);
     }
     _ '(' _ proc_params? _ ')' ~ { _cap_ERROR("proc_expr", "Expected closing ')'"); }
     _ b:body ~ { _cap_ERROR("proc_expr", "Body is required for procedure expressions"); } {
@@ -25,7 +25,7 @@ proc_stmt <-
     {
         cap_ps_push(auxil);
         auxil->stack->mark = PROC_PARAMS;
-        auxil->stack->data = cst_ninit_ProcStmt((struct cst_nProcStmt*)malloc(sizeof(struct cst_nProcStmt)), $0s, $0e, n, t, NULL, 0, 0);
+        auxil->stack->data = cst_ninit_ProcStmt((struct cst_nProcStmt*)malloc(sizeof(struct cst_nProcStmt)), $0s, $0e, cap_lno(auxil), cap_cno(auxil, $0s), n, t, NULL, 0, 0);
     }
     _ '(' _ proc_params? _ ')' ~ { _cap_ERROR("proc_stmt", "Expected closing ')'"); }
     _ b:body? {
