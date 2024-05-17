@@ -173,6 +173,12 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_index(cst_NODECAST(WhileStmt, node)->body, stream);
             _cst_serialize_bool(cst_NODECAST(WhileStmt, node)->do_while, stream);
             break;
+        case PassStmt:
+            break;
+        case FlowControlStmt:
+            assert(cst_NODECAST(FlowControlStmt, node)->type < 256);
+            fputc((char)(cst_NODECAST(FlowControlStmt, node)->op), stream);
+            break;
         // Default
         default: assert(false);
     }
@@ -350,6 +356,13 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             cst_NODECAST(WhileStmt, node)->cond = _cst_deserialize_index(stream);
             cst_NODECAST(WhileStmt, node)->body = _cst_deserialize_index(stream);
             cst_NODECAST(WhileStmt, node)->do_while = _cst_deserialize_bool(stream);
+            break;
+        case PassStmt:
+            _cst_ALLOCNODE(PassStmt);
+            break;
+        case FlowControlStmt:
+            _cst_ALLOCNODE(FlowControlStmt);
+            cst_NODECAST(FlowControlStmt, node)->type = (enum cst_FlowControlType)fgetc(stream);
             break;
         // Default
         default: assert(false);

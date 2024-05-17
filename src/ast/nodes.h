@@ -39,6 +39,8 @@ enum cst_NodeType {
     ElseStmt = 19,
     ForStmt = 20,
     WhileStmt = 21,
+    PassStmt = 22,
+    FlowControlStmt = 23,
 };
 
 struct cst_NodeBase {
@@ -72,6 +74,16 @@ void cst_node_add(struct cst_Root* root, struct cst_NodeBase* node) {
 
 #define cst_MKNODETYPE_S(name, mtype, mname) \
     cst_MKNODETYPE(name, mtype mname;, {n->mname = mname;}, mtype mname)
+#define cst_MKNODETYPE_E(name) \
+    struct cst_n##name { \
+        struct cst_NodeBase _base; \
+    }; \
+    struct cst_n##name* cst_ninit_##name(struct cst_n##name* n, unsigned int p_start, unsigned int p_end) { \
+        cst_NODEDOWNCAST(n)->type = name; \
+        cst_NODEDOWNCAST(n)->is_freed = false; \
+        cst_NODEDOWNCAST(n)->pos_start = p_start; \
+        cst_NODEDOWNCAST(n)->pos_end = p_end; \
+        return n; }
 
 #define cst_NODECAST(type, node) ((struct cst_n##type*)node)
 #define cst_NODEDOWNCAST(node) ((struct cst_NodeBase*)node)

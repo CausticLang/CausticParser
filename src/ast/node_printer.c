@@ -165,6 +165,12 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             _cst_NODEPRINTSUB(WhileStmt, "body[noderef]: %u", body);
             _cst_NODEPRINTSUB(WhileStmt, "do_while[bool]: %d", do_while);
             break;
+        case PassStmt:
+            printf("%sPassStmt <no contents>%s", prefix, suffix);
+            break;
+        case FlowControlStmt:
+            _cst_NODEPRINTTOP(FlowControlStmt, "type: %d", type);
+            break;
         // Fail
         default: assert(false);
         #undef _cst_NODEPRINTTOP
