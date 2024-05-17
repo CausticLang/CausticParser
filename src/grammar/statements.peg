@@ -3,6 +3,7 @@ line_statement <-
   / s:dowhile_stmt { $$ = s; }
   / s:pass_stmt { $$ = s; }
   / s:flowctl_stmt { $$ = s; }
+  / s:return_stmt { $$ = s; }
   / s:declare_stmt { $$ = s; }
   / s:assign_stmt { $$ = s; }
 
@@ -86,6 +87,11 @@ flowctl_stmt <-
         $$ = _cap_LASTNODE;
     }
 
+return_stmt <-
+    RETURN_KW _ v:expression? {
+        _cap_ADDNODE(_cap_MKINITNODE(ReturnStmt, v));
+        $$ = _cap_LASTNODE;
+    }
 
 declare_stmt <-
     t:type _ n:identifier

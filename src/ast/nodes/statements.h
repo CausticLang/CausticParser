@@ -34,6 +34,8 @@ enum cst_FlowControlType:char {
 };
 cst_MKNODETYPE_S(FlowControlStmt, enum cst_FlowControlType, type);
 
+cst_MKNODETYPE_S(ReturnStmt, cst_index, val);
+
 
 cst_MKNODETYPE(Declaration, cst_index type; cst_index name; cst_index val;, {
     n->type = type;

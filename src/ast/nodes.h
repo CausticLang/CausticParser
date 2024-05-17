@@ -49,6 +49,7 @@ enum cst_NodeType:char {
     WhileStmt = 21,
     PassStmt = 22,
     FlowControlStmt = 23,
+    ReturnStmt = 31,
     Declaration = 25,
     Assignment = 26,
 };

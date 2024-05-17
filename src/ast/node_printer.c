@@ -237,6 +237,9 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
         case FlowControlStmt:
             _cst_NODEPRINTTOP(FlowControlStmt, "type: %d", type);
             break;
+        case ReturnStmt:
+            _cst_NODEPRINTTOP(ReturnStmt, "val[noderef]: %u", val);
+            break;
         case Declaration:
             _cst_NODEPRINTTOP(Declaration, "type[noderef]: %u", type);
             _cst_NODEPRINTSUB(Declaration, "name[noderef]: %u", name);
