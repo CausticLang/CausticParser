@@ -42,7 +42,7 @@ struct cst_nClass_Member {
         cst_index method;
     };
     enum:char { INSTANCE_MEMBER, CLASS_MEMBER,
-                INSTANCE_METHOD, CLASS_METHOD, STATIC_METHOD, } type;
+                INSTANCE_METHOD, CLASS_METHOD, } type;
 };
 struct cst_nClass_Method {
     cst_index proc;
