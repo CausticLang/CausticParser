@@ -3,6 +3,8 @@
 '''Utility module to convert serialized CSTs to Python classes'''
 
 #> Imports
+import struct
+import typing
 from enum import IntEnum
 #</Imports
 
@@ -11,6 +13,8 @@ __all__ = ('NodeType',)
 
 class NodeType(IntEnum):
     '''cst_NodeType'''
+    __slots__ = ()
+
     # Control
     Entrypoint = 0
     ExtraData = 255
@@ -47,3 +51,12 @@ class NodeType(IntEnum):
     FlowControlStmt = 23
     Declaration = 25
     Assignment = 26
+
+    def to_char(self) -> bytes:
+        return bytes((self.value,))
+    def serialize(self, stream: typing.BinaryIO) -> None:
+        stream.write(self.STRUCT.pack(self.to_char()))
+    @classmethod
+    def deserialize(cls, stream: typing.BinaryIO) -> typing.Self:
+        return cls(cls.STRUCT.unpack(stream.read(cls.STRUCT.size))[0][0])
+NodeType.STRUCT = struct.Struct('c')
