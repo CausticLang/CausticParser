@@ -176,6 +176,15 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
         case FlowControlStmt:
             _cst_NODEPRINTTOP(FlowControlStmt, "type: %d", type);
             break;
+        case Declaration:
+            _cst_NODEPRINTTOP(Declaration, "type[noderef]: %u", type);
+            _cst_NODEPRINTSUB(Declaration, "name[noderef]: %u", name);
+            _cst_NODEPRINTSUB(Declaration, "val[noderef]: %u", val);
+            break;
+        case Assignment:
+            _cst_NODEPRINTTOP(Assignment, "target[noderef]: %u", target);
+            _cst_NODEPRINTSUB(Assignment, "val[noderef]: %u", val);
+            break;
         // Fail
         default: assert(false);
         #undef _cst_NODEPRINTTOP

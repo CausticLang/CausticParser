@@ -43,6 +43,8 @@ enum cst_NodeType {
     WhileStmt = 21,
     PassStmt = 22,
     FlowControlStmt = 23,
+    Declaration = 25,
+    Assignment = 26,
 };
 
 struct cst_NodeBase {

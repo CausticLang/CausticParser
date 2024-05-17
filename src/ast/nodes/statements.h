@@ -33,3 +33,14 @@ enum cst_FlowControlType {
     BREAK, CONTINUE,
 };
 cst_MKNODETYPE_S(FlowControlStmt, enum cst_FlowControlType, type);
+
+
+cst_MKNODETYPE(Declaration, cst_index type; cst_index name; cst_index val;, {
+    n->type = type;
+    n->name = name;
+    n->val = val;
+}, cst_index type, cst_index name, cst_index val);
+cst_MKNODETYPE(Assignment, cst_index target; cst_index val;, {
+    n->target = target;
+    n->val = val;
+}, cst_index target, cst_index val);

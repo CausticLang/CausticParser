@@ -13,7 +13,7 @@ void cst_free_node(struct cst_NodeBase* node) {
         case Bool:
         case UnaryOp: case BinaryOp: case TernaryOp:
         case Attribute: case Subscript:
-        case IfStmt: case ElIfStmt: case ElseStmt: case ForStmt: case WhileStmt: case PassStmt: case FlowControlStmt:
+        case IfStmt: case ElIfStmt: case ElseStmt: case ForStmt: case WhileStmt: case PassStmt: case FlowControlStmt: case Declaration: case Assignment:
             break; // no freeing needed
         case ExtraData:
             if (!cst_NODECAST(ExtraData, node)->static_meta)

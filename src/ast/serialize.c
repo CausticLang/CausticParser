@@ -184,6 +184,15 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             assert(cst_NODECAST(FlowControlStmt, node)->type < 256);
             fputc((char)(cst_NODECAST(FlowControlStmt, node)->op), stream);
             break;
+        case Declaration:
+            _cst_serialize_index(cst_NODECAST(Declaration, node)->type, stream);
+            _cst_serialize_index(cst_NODECAST(Declaration, node)->name, stream);
+            _cst_serialize_index(cst_NODECAST(Declaration, node)->val, stream);
+            break;
+        case Assignment:
+            _cst_serialize_index(cst_NODECAST(Assignment, node)->target, stream);
+            _cst_serialize_index(cst_NODECAST(Assignment, node)->val, stream);
+            break;
         // Default
         default: assert(false);
     }
@@ -374,6 +383,17 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
         case FlowControlStmt:
             _cst_ALLOCNODE(FlowControlStmt);
             cst_NODECAST(FlowControlStmt, node)->type = (enum cst_FlowControlType)fgetc(stream);
+            break;
+        case Declaration:
+            _cst_ALLOCNODE(Declaration);
+            cst_NODECAST(Declaration, node)->type = _cst_deserialize_index(stream);
+            cst_NODECAST(Declaration, node)->name = _cst_deserialize_index(stream);
+            cst_NODECAST(Declaration, node)->val = _cst_deserialize_index(stream);
+            break;
+        case Assignment:
+            _cst_ALLOCNODE(Assignment);
+            cst_NODECAST(Assignment, node)->target = _cst_deserialize_index(stream);
+            cst_NODECAST(Assignment, node)->val = _cst_deserialize_index(stream);
             break;
         // Default
         default: assert(false);
