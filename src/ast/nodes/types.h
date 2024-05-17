@@ -44,10 +44,6 @@ struct cst_nClass_Member {
     bool is_static;
     bool is_method;
 };
-struct cst_nClass_Method {
-    cst_index proc;
-    enum:char { INSTANCE, CLASS, STATIC } type;
-};
 
 cst_MKNODETYPE(Class, cst_index name; cst_index base; struct cst_nClass_Member** members; size_t member_count;, {
     n->name = name;
