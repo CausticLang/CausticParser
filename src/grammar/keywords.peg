@@ -1,0 +1,10 @@
+keyword <-
+    PROC_KW / IF_KW / ELIF_KW / ELSE_KW / FOR_KW / WHILE_KW / DO_KW
+
+PROC_KW <- 'proc'
+IF_KW <- 'if'
+ELIF_KW <- 'elif'
+ELSE_KW <- 'else'
+FOR_KW <- 'for'
+WHILE_KW <- 'while'
+DO_KW <- 'do'

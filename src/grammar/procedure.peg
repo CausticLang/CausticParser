@@ -1,7 +1,5 @@
-PROC <- 'proc'
-
 proc_expr <-
-    PROC
+    PROC_KW
     _ '<' ~ { _cap_ERROR("proc_expr", "Expected '<' after 'proc'"); }
     _ t:identifier ~ { _cap_ERROR("proc_expr", "Expected type after '<'"); }
     _ '>' ~ { _cap_ERROR("proc_expr", "Expected closing '>'"); }
@@ -16,7 +14,7 @@ proc_expr <-
     }
 
 proc_stmt <-
-    PROC _
+    PROC_KW _
     ( '<' _ t:identifier ~ { _cap_ERROR("proc_stmt", "Expected type after '<'"); }
       _ '>' ~ { _cap_ERROR("proc_stmt", "Expected closing '>'"); }
     / t:identifier ) ~ { _cap_ERROR("proc_stmt", "Expected either identifier or '<' for procedure statement type"); }

@@ -28,6 +28,7 @@ _start <-
 %import "grammar/block.peg"
 %import "grammar/expression.peg"
 %import "grammar/invoke.peg"
+%import "grammar/keywords.peg"
 %import "grammar/procedure.peg"
 %import "grammar/statements.peg"
 %import "grammar/whitespace.peg"

@@ -10,30 +10,30 @@ block_statement <-
   / s:proc_stmt { $$ = s; }
 
 illegal_stmt <-
-    'elif' { _cap_ERROR("statement", "Unexpected 'elif'"); }
-  / 'else' { _cap_ERROR("statement", "Unexpected 'else'"); }
+    ELIF_KW { _cap_ERROR("statement", "Unexpected 'elif'"); }
+  / ELSE_KW { _cap_ERROR("statement", "Unexpected 'else'"); }
 
 
 if_stmt <-
-    'if' _ c:expression _ b:body
+    IF_KW _ c:expression _ b:body
     _ ( n:elif_stmt / n:else_stmt ) {
         _cap_ADDNODE(_cap_MKINITNODE(IfStmt, c, b, n));
         $$ = _cap_LASTNODE;
     }
 elif_stmt <-
-    'elif' _ c:expression _ b:body
+    ELIF_KW _ c:expression _ b:body
     _ ( n:elif_stmt / n:else_stmt ) {
         _cap_ADDNODE(_cap_MKINITNODE(ElIfStmt, c, b, n));
         $$ = _cap_LASTNODE;
     }
 else_stmt <-
-    'else' _ b:body {
+    ELSE_KW _ b:body {
         _cap_ADDNODE(_cap_MKINITNODE(ElseStmt, b));
         $$ = _cap_LASTNODE;
     }
 
 for_stmt <-
-    'for' _ '(' ~ { _cap_ERROR("for_stmt", "Expected '(' after 'for'"); }
+    FOR_KW _ '(' ~ { _cap_ERROR("for_stmt", "Expected '(' after 'for'"); }
     _ ( init:line_statement / init:expression )? ~ { _cap_ERROR("for_stmt", "Expected expression or line-statement after '(' as for initialization part"); }
     _ EOL ~ { _cap_ERROR("for_stmt", "Expected EOL ';' after for initialization part"); }
     _ cond:expression? ~ { _cap_ERROR("for_stmt", "Expected expression as for condition part"); }
@@ -53,11 +53,11 @@ while_stmt <-
     }
 
 dowhile_stmt <-
-    'do' _ b:body ~ { _cap_ERROR("dowhile_stmt", "Expected do-while body after 'do'"); }
+    DO_KW _ b:body ~ { _cap_ERROR("dowhile_stmt", "Expected do-while body after 'do'"); }
     _ c:while_cond ~ { _cap_ERROR("dowhile_stmt", "Expected 'while'"); } {
         _cap_ADDNODE(_cap_MKINITNODE(WhileStmt, c, b, true));
         $$ = _cap_LASTNODE;
     }
 
 while_cond <-
-    'while' _ c:expression ~ { _cap_ERROR("while_cond", "Expected expression after 'while'"); } { $$ = c; }
+    WHILE_KW _ c:expression ~ { _cap_ERROR("while_cond", "Expected expression after 'while'"); } { $$ = c; }

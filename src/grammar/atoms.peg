@@ -1,6 +1,7 @@
 atom <- (n:float_literal / n:int_literal / n:char_literal / n:bool_literal / n:bytes_literal / n:string_literal / n:identifier) { $$ = n; }
 
-identifier <- < [a-zA-Z_][a-zA-Z_0-9]* > {
+identifier <- !keyword ~ { _cap_ERROR("identifier", "Cannot use a reserved keyword"); }
+    < [a-zA-Z_][a-zA-Z_0-9]* > {
     _cap_ADDNODE(_cap_MKINITNODE(Identifier, _cap_COPYSTR($1)));
     $$ = _cap_LASTNODE;
 }
