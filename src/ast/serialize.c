@@ -117,6 +117,15 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_index(cst_NODECAST(TernaryOp, node)->b, stream);
             _cst_serialize_index(cst_NODECAST(TernaryOp, node)->c, stream);
             break;
+        // Accesses
+        case Attribute:
+            _cst_serialize_index(cst_NODECAST(Attribute, node)->top, stream);
+            _cst_serialize_index(cst_NODECAST(Attribute, node)->sub, stream);
+            break;
+        case Attribute:
+            _cst_serialize_index(cst_NODECAST(Subscript, node)->top, stream);
+            _cst_serialize_index(cst_NODECAST(Subscript, node)->sub, stream);
+            break;
         // Procedures
         case ProcInvoke:
             _cst_serialize_index(cst_NODECAST(ProcInvoke, node)->proc, stream);
@@ -273,6 +282,17 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             cst_NODECAST(TernaryOp, node)->a = _cst_deserialize_index(stream);
             cst_NODECAST(TernaryOp, node)->b = _cst_deserialize_index(stream);
             cst_NODECAST(TernaryOp, node)->c = _cst_deserialize_index(stream);
+            break;
+        // Accesses
+        case Attribute:
+            _cst_ALLOCNODE(Attribute);
+            cst_NODECAST(Attribute, node)->top = _cst_deserialize_index(stream);
+            cst_NODECAST(Attribute, node)->sub = _cst_deserialize_index(stream);
+            break;
+        case Subscript:
+            _cst_ALLOCNODE(Subscript);
+            cst_NODECAST(Subscript, node)->top = _cst_deserialize_index(stream);
+            cst_NODECAST(Subscript, node)->sub = _cst_deserialize_index(stream);
             break;
         // Procedures
         case ProcInvoke:

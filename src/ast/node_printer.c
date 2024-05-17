@@ -78,6 +78,16 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             _cst_NODEPRINTTOP(TernaryOp, "a[noderef]: %u", a);
             _cst_NODEPRINTSUB(TernaryOp, "b[noderef]: %u", b);
             _cst_NODEPRINTSUB(TernaryOp, "c[noderef]: %u", c);
+            break;
+        // Accesses
+        case Attribute:
+            _cst_NODEPRINTTOP(Attribute, "top[noderef]: %u", top);
+            _cst_NODEPRINTSUB(Attribute, "sub[noderef]: %u", sub);
+            break;
+        case Subscript:
+            _cst_NODEPRINTTOP(Subscript, "top[noderef]: %u", top);
+            _cst_NODEPRINTSUB(Subscript, "sub[noderef]: %u", sub);
+            break;
         // Procedures
         case ProcInvoke:
             _cst_NODEPRINTTOP(ProcInvoke, "proc[noderef]: %u", proc);
