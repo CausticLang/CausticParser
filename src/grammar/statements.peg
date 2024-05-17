@@ -1,6 +1,8 @@
 line_statement <-
     illegal_stmt
   / s:dowhile_stmt { $$ = s; }
+  / s:pass_stmt { $$ = s; }
+  / s:flowctl_stmt { $$ = s; }
 
 block_statement <-
     illegal_stmt
@@ -61,3 +63,19 @@ dowhile_stmt <-
 
 while_cond <-
     WHILE_KW _ c:expression ~ { _cap_ERROR("while_cond", "Expected expression after 'while'"); } { $$ = c; }
+
+
+pass_stmt <- PASS_KW {
+    _cap_ADDNODE(cst_ninit_PassStmt(_cap_MKNODE(PassStmt), $0s, $0e));
+    $$ = _cap_LASTNODE;
+}
+
+flowctl_stmt <-
+    BREAK_KW {
+        _cap_ADDNODE(_cap_MKINITNODE(FlowControlStmt, BREAK));
+        $$ = _cap_LASTNODE;
+    }
+  / CONTINUE_KW {
+        _cap_ADDNODE(_cap_MKINITNODE(FlowControlStmt, CONTINUE));
+        $$ = _cap_LASTNODE;
+    }

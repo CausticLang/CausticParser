@@ -1,5 +1,5 @@
 keyword <-
-    PROC_KW / IF_KW / ELIF_KW / ELSE_KW / FOR_KW / WHILE_KW / DO_KW
+    PROC_KW / IF_KW / ELIF_KW / ELSE_KW / FOR_KW / WHILE_KW / DO_KW / PASS_KW / BREAK_KW / CONTINUE_KW
 
 PROC_KW <- 'proc'
 IF_KW <- 'if'
@@ -8,3 +8,6 @@ ELSE_KW <- 'else'
 FOR_KW <- 'for'
 WHILE_KW <- 'while'
 DO_KW <- 'do'
+PASS_KW <- 'pass'
+BREAK_KW <- 'break'
+CONTINUE_KW <- 'continue'
