@@ -3,6 +3,8 @@ line_statement <-
   / s:dowhile_stmt { $$ = s; }
   / s:pass_stmt { $$ = s; }
   / s:flowctl_stmt { $$ = s; }
+  / s:declare_stmt { $$ = s; }
+  / s:assign_stmt { $$ = s; }
 
 block_statement <-
     illegal_stmt
@@ -77,5 +79,20 @@ flowctl_stmt <-
     }
   / CONTINUE_KW {
         _cap_ADDNODE(_cap_MKINITNODE(FlowControlStmt, CONTINUE));
+        $$ = _cap_LASTNODE;
+    }
+
+
+declare_stmt <-
+    t:type _ n:identifier ~ { _cap_ERROR("declare_stmt", "Expected identifier after type"); }
+    ( _ '=' _ v:expression ~ { _cap_ERROR("declare_stmt", "Expected expression after '='"); } )? {
+        _cap_ADDNODE(_cap_MKINITNODE(Declaration, t, n, v));
+        $$ = _cap_LASTNODE;
+    }
+
+assign_stmt <-
+    ( t:identifier / t:attr_access / t:subscript_access )
+    _ '=' _ v:expression ~ { _cap_ERROR("assign_stmt", "Expected expression after '='"); } {
+        _cap_ADDNODE(_cap_MKINITNODE(Assignment, t, v));
         $$ = _cap_LASTNODE;
     }
