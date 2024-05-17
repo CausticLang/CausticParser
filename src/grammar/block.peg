@@ -9,12 +9,14 @@ block_inner <-
     {
         cap_ps_push(auxil);
         auxil->stack->mark = BLOCK;
-        auxil->stack->data = cst_ninit_Block(malloc(sizeof(struct cst_nBlock)), $0s, $0e);
+        auxil->stack->data = cst_ninit_Block(malloc(sizeof(struct cst_nBlock)), $0s, 0);
     }
     line_inner*
     {
         assert(auxil->stack->mark == BLOCK);
-        _cap_ADDNODE((struct cst_nBlock*)cap_ps_pop(auxil));
+        struct cst_nBlock* block = cap_ps_pop(auxil);
+        cst_NODEDOWNCAST(block)->pos_end = $0e;
+        _cap_ADDNODE(block);
         $$ = _cap_LASTNODE;
     }
 
