@@ -13,6 +13,8 @@ enum cst_NodeType {
     Entrypoint = 0,
     ExtraData = 255,
     Block = 16,
+    // Types
+    Type = 24,
     // Expressions
     /// Atoms
     Identifier = 1,
@@ -102,6 +104,7 @@ cst_MKNODETYPE(ExtraData, char* meta; char* data; bool static_meta;, {
 #include "nodes/operators.h"
 #include "nodes/procedures.h"
 #include "nodes/statements.h"
+#include "nodes/types.h"
 
 
 #endif

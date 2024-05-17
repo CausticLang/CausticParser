@@ -71,6 +71,11 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_sizet(cst_NODECAST(Block, node)->node_count, stream);
             _cst_serialize_indexes(cst_NODECAST(Block, node)->nodes, cst_NODECAST(Block, node)->node_count, stream);
             break;
+        // Types
+        case Type:
+            _cst_serialize_index(cst_NODECAST(Type, node)->top, stream);
+            _cst_serialize_index(cst_NODECAST(Type, node)->sub, stream);
+            break;
         // Atoms
         case Identifier:
             _cst_serialize_chars(cst_NODECAST(Identifier, node)->val, stream);
@@ -122,7 +127,7 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
             _cst_serialize_index(cst_NODECAST(Attribute, node)->top, stream);
             _cst_serialize_index(cst_NODECAST(Attribute, node)->sub, stream);
             break;
-        case Attribute:
+        case Subscript:
             _cst_serialize_index(cst_NODECAST(Subscript, node)->top, stream);
             _cst_serialize_index(cst_NODECAST(Subscript, node)->sub, stream);
             break;
@@ -235,6 +240,12 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             _cst_ALLOCNODE(Block);
             size_t ncount = cst_NODECAST(Block, node)->node_count = _cst_deserialize_sizet(stream);
             cst_NODECAST(Block, node)->nodes = _cst_deserialize_indexes(ncount, stream);
+            break;
+        // Types
+        case Type:
+            _cst_ALLOCNODE(Type);
+            cst_NODECAST(Type, node)->top = _cst_deserialize_index(stream);
+            cst_NODECAST(Type, node)->sub = _cst_deserialize_index(stream);
             break;
         // Atoms
         case Identifier:

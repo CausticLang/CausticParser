@@ -9,6 +9,7 @@ void cst_free_node(struct cst_NodeBase* node) {
     switch (node->type) {
         #define _cst_FREEVAL(type) case type: free(cst_NODECAST(type, node)->val); break
         case Entrypoint:
+        case Type:
         case Bool:
         case UnaryOp: case BinaryOp: case TernaryOp:
         case Attribute: case Subscript:
