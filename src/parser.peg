@@ -32,6 +32,7 @@ _start <-
 %import "grammar/keywords.peg"
 %import "grammar/procedure.peg"
 %import "grammar/statements.peg"
+%import "grammar/types.peg"
 %import "grammar/whitespace.peg"
 
 %%

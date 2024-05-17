@@ -1,7 +1,7 @@
 proc_expr <-
     PROC_KW
     _ '<' ~ { _cap_ERROR("proc_expr", "Expected '<' after 'proc'"); }
-    _ t:identifier ~ { _cap_ERROR("proc_expr", "Expected type after '<'"); }
+    _ t:type ~ { _cap_ERROR("proc_expr", "Expected type after '<'"); }
     _ '>' ~ { _cap_ERROR("proc_expr", "Expected closing '>'"); }
     {
         cap_ps_push(auxil);
@@ -15,9 +15,9 @@ proc_expr <-
 
 proc_stmt <-
     PROC_KW _
-    ( '<' _ t:identifier ~ { _cap_ERROR("proc_stmt", "Expected type after '<'"); }
+    ( '<' _ t:type ~ { _cap_ERROR("proc_stmt", "Expected type after '<'"); }
       _ '>' ~ { _cap_ERROR("proc_stmt", "Expected closing '>'"); }
-    / t:identifier ) ~ { _cap_ERROR("proc_stmt", "Expected either identifier or '<' for procedure statement type"); }
+    / t:type ) ~ { _cap_ERROR("proc_stmt", "Expected type or '<' for procedure statement type"); }
     _ n:identifier ~ { _cap_ERROR("proc_stmt", "Expected identifier after procedure statement type"); }
     {
         cap_ps_push(auxil);
@@ -48,7 +48,7 @@ proc_kwonly_params <-
 
 
 proc_posonly_param <-
-    t:identifier _ n:identifier ~ { _cap_ERROR("proc_posonly_param", "Expected identifier"); }
+    t:type _ n:identifier ~ { _cap_ERROR("proc_posonly_param", "Expected identifier"); }
     ( _ '=' _ d:expression ~ { _cap_ERROR("proc_posonly_param", "Expected expression after '='"); } {
         assert(auxil->stack->mark == PROC_PARAMS);
         cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->data), POS_ONLY, t, n, true, d); }
@@ -57,7 +57,7 @@ proc_posonly_param <-
         cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->data), POS_ONLY, t, n, false, 0);
       } )
 proc_posorkw_param <-
-    t:identifier _ n:identifier ~ { _cap_ERROR("proc_posorkw_param", "Expected identifier"); }
+    t:type _ n:identifier ~ { _cap_ERROR("proc_posorkw_param", "Expected identifier"); }
     ( _ '=' _ d:expression ~ { _cap_ERROR("proc_posorkw_param", "Expected expression after '='"); } {
         assert(auxil->stack->mark == PROC_PARAMS);
         cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->data), POS_OR_KW, t, n, true, d); }
@@ -66,7 +66,7 @@ proc_posorkw_param <-
         cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->data), POS_OR_KW, t, n, false, 0);
       } )
 proc_kwonly_param <-
-    t:identifier _ n:identifier ~ { _cap_ERROR("proc_kwonly_param", "Expected identifier"); }
+    t:type _ n:identifier ~ { _cap_ERROR("proc_kwonly_param", "Expected identifier"); }
     ( _ '=' _ d:expression ~ { _cap_ERROR("proc_kwonly_param", "Expected expression after '='"); } {
         assert(auxil->stack->mark == PROC_PARAMS);
         cst_PROC_ADD_PARAM((struct cst_nProcExpr*)(auxil->stack->data), KW_ONLY, t, n, true, d); }

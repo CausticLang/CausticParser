@@ -1,0 +1,7 @@
+type <-
+    t:identifier
+    ( _ '<' _ s:type ~ { _cap_ERROR("type", "Expected (sub)type after '<'"); }
+      _ '>' ~ { _cap_ERROR("type", "Expected closing '>'"); } )? {
+        _cap_ADDNODE(_cap_MKINITNODE(Type, t, s));
+        $$ = _cap_LASTNODE;
+    }
