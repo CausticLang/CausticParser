@@ -17,6 +17,10 @@ enum cst_NodeType:char {
     Block = 16,
     // Types
     Type = 24,
+    Enum = 27,
+    Struct = 28,
+    StructEnum = 29,
+    Class = 30,
     // Expressions
     /// Atoms
     Identifier = 1,

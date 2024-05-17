@@ -44,6 +44,61 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             _cst_NODEPRINTTOP(Type, "top[noderef]: %u", top);
             _cst_NODEPRINTSUB(Type, "sub[noderef]: %u", sub);
             break;
+        case Enum:
+            _cst_NODEPRINTTOP(Enum, "name[noderef]: %u", name);
+            _cst_NODEPRINTSUB(Enum, "base[noderef]: %u", base);
+            _cst_NODEPRINTSUB(Enum, "member_count[int]: %u", member_count);
+            _cst__NODEPRINTSUB(Enum, "members[nEnum_Member*]:");
+            printf("/members[nEnum_Member*]:%s", suffix);
+            for (int i = 0; i < cst_NODECAST(Enum, node)->member_count; i++) {
+                _cst__NODEPRINTSUB(Enum, "members[nEnum_Member*]:");
+                printf("- name[noderef]: %u%s", cst_NODECAST(Enum, node)->members[i]->name, suffix);
+                _cst__NODEPRINTSUB(Enum, "members[nEnum_Member*]:");
+                printf("  val[noderef]: %u%s", cst_NODECAST(Enum, node)->members[i]->val, suffix);
+            }
+            break;
+        case Struct:
+            _cst_NODEPRINTTOP(Struct, "name[noderef]: %u", name);
+            _cst_NODEPRINTSUB(Struct, "base[noderef]: %u", base);
+            _cst_NODEPRINTSUB(Struct, "member_count[int]: %u", member_count);
+            _cst__NODEPRINTSUB(Struct, "members[nStruct_Member*]:");
+            printf("/members[nStruct_Member*]:%s", suffix);
+            for (int i = 0; i < cst_NODECAST(Struct, node)->member_count; i++) {
+                _cst__NODEPRINTSUB(Struct, "members[nStruct_Member*]:");
+                printf("- type[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i]->type, suffix);
+                _cst__NODEPRINTSUB(Struct, "members[nStruct_Member*]:");
+                printf("  name[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i]->name, suffix);
+                _cst__NODEPRINTSUB(Struct, "members[nStruct_Member*]:");
+                printf("  val[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i]->val, suffix);
+            }
+            break;
+        case StructEnum:
+            _cst_NODEPRINTTOP(StructEnum, "name[noderef]: %u", name);
+            _cst_NODEPRINTSUB(StructEnum, "base[noderef]: %u", base);
+            _cst_NODEPRINTSUB(StructEnum, "member_count[int]: %u", member_count);
+            _cst_NODEPRINTSUBLIST(StructEnum, "members[noderef*]:", members, member_count, "%u");
+            break;
+        case Class:
+            _cst_NODEPRINTTOP(Class, "name[noderef]: %u", name);
+            _cst_NODEPRINTSUB(Class, "base[noderef]: %u", base);
+            _cst_NODEPRINTSUB(Class, "member_count[int]: %u", member_count);
+            _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
+            printf("/members[nClass_Member*]:%s", suffix);
+            for (int i = 0; i < cst_NODECAST(Class, node)->member_count; i++) {
+                _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
+                printf("- type: %u%s", cst_NODECAST(Class, node)->members[i]->type);
+                _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
+                if (cst_NODECAST(Class, node)->members[i]->type > CLASS_MEMBER) {
+                    printf("  method[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member, suffix);
+                    continue;
+                }
+                printf("  member/type[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member->type, suffix);
+                _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
+                printf("  member/name[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member->name, suffix);
+                _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
+                printf("  member/val[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member->val, suffix);
+            }
+            break;
         // Atoms
         case Identifier:
             _cst_NODEPRINTTOP(Identifier, "val[str]: %s", val);
