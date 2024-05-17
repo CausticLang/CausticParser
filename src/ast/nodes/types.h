@@ -41,8 +41,8 @@ struct cst_nClass_Member {
         struct cst_nStruct_Member* member;
         cst_index method;
     };
-    enum:char { INSTANCE_MEMBER, CLASS_MEMBER,
-                INSTANCE_METHOD, CLASS_METHOD, } type;
+    bool is_static;
+    bool is_method;
 };
 struct cst_nClass_Method {
     cst_index proc;

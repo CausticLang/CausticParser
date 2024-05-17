@@ -86,9 +86,11 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             printf("/members[nClass_Member*]:%s", suffix);
             for (int i = 0; i < cst_NODECAST(Class, node)->member_count; i++) {
                 _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
-                printf("- type: %u%s", cst_NODECAST(Class, node)->members[i]->type);
+                printf("- is_method[bool]: %d%s", cst_NODECAST(Class, node)->members[i]->is_method);
                 _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
-                if (cst_NODECAST(Class, node)->members[i]->type > CLASS_MEMBER) {
+                printf("  is_static[bool]: %d%s", cst_NODECAST(Class, node)->members[i]->is_static);
+                _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
+                if (cst_NODECAST(Class, node)->is_method) {
                     printf("  method[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member, suffix);
                     continue;
                 }

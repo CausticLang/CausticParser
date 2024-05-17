@@ -38,7 +38,7 @@ void cst_free_node(struct cst_NodeBase* node) {
             break;
         case Class:
             for (int i = 0; i < cst_NODECAST(Class, node)->member_count; i++) {
-                if (cst_NODECAST(Class, node)->members[i]->type <= CLASS_MEMBER)
+                if (!cst_NODECAST(Class, node)->members[i]->is_method)
                     free(cst_NODECAST(Class, node)->members[i]->member);
                 free(cst_NODECAST(Class, node)->members[i]);
             }
