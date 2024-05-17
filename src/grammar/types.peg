@@ -36,17 +36,19 @@ enum_member <-
     }
 
 struct <-
-    STRUCT_KW _ n:identifier ~ { _cap_ERROR("struct", "Expected identifier after 'struct'"); }
-    _ ( '<' _ b:identifier ~ { _cap_ERROR("struct", "Expected identifier after '<'"); }
-        _ '>' ~ { _cap_ERROR("struct", "Expected closing '>'"); } )?
-    _ '{' ~ { _cap_ERROR("struct", "Expected '{'"); }
+    STRUCT_KW _ s:struct_inner ~ { _cap_ERROR("struct", "Expected identifier after 'struct'"); } { $$ = s; }
+struct_inner <-
+    n:identifier
+    _ ( '<' _ b:identifier ~ { _cap_ERROR("struct_inner", "Expected identifier after '<'"); }
+        _ '>' ~ { _cap_ERROR("struct_inner", "Expected closing '>'"); } )?
+    _ '{' ~ { _cap_ERROR("struct_inner", "Expected '{'"); }
     {
         cap_ps_push(auxil);
         auxil->stack->mark = STRUCT_BODY;
         auxil->stack->data = _cap_MKINITNODE(Struct, n, b, NULL, 0);
     }
     _ ( struct_member _ )*
-    _ '}' ~ { _cap_ERROR("struct", "Expected closing '}'"); } {
+    _ '}' ~ { _cap_ERROR("struct_inner", "Expected closing '}'"); } {
         _cap_ADDNODE(cap_ps_pop(auxil));
         $$ = _cap_LASTNODE;
     }
@@ -62,4 +64,27 @@ struct_member <-
         st->members[st->member_count-1]->type = t;
         st->members[st->member_count-1]->name = n;
         st->members[st->member_count-1]->val = v;
+    }
+
+structenum <-
+    STRUCTENUM_KW _ n:identifier ~ { _cap_ERROR("structenum", "Expected identifier after 'tunion'"); }
+    _ ( '<' _ b:identifier ~ { _cap_ERROR("structenum", "Expected identifier after '<'"); }
+      _ '>' ~ { _cap_ERROR("structenum", "Expected closing '>'"); } )? {
+        cap_ps_push(auxil);
+        auxil->stack->mark = STRUCTENUM_BODY;
+        auxil->stack->data = _cap_MKINITNODE(StructEnum, n, b, NULL, 0);
+    }
+    _ '{' ~ { _cap_ERROR("structenum", "Expected '{'"); }
+    _ ( structenum_member _ )*
+    _ '}' ~ { _cap_ERROR("structenum", "Expected closing '}'"); } {
+        _cap_ADDNODE(cap_ps_pop(auxil));
+        $$ = _cap_LASTNODE;
+    }
+
+structenum_member <-
+    s:struct_inner _ EOL ~ { _cap_ERROR("structenum_member", "Expected EOL ';' after tagged-union member"); } {
+        assert(auxil->stack->mark == STRUCTENUM_BODY);
+        struct cst_nStructEnum* es = auxil->stack->data;
+        es->members = realloc(es->members, (++es->member_count) * sizeof(cst_index));
+        es->members[es->member_count-1] = s;
     }
