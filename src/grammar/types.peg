@@ -7,3 +7,59 @@ type <-
     }
   / # Flat type
     t:identifier { $$ = t; }
+
+enum <-
+    ENUM_KW _ n:identifier ~ { _cap_ERROR("enum", "Expected identifier after 'enum'"); }
+    _ ( '<' _ b:identifier ~ { _cap_ERROR("enum", "Expected identifier after '<'"); }
+        _ '>' ~ { _cap_ERROR("enum", "Expected closing '>'"); } )?
+    _ '{' ~ { _cap_ERROR("enum", "Expected '{'"); }
+    {
+        cap_ps_push(auxil);
+        auxil->stack->mark = ENUM_BODY;
+        auxil->stack->data = _cap_MKINITNODE(Enum, n, b, NULL, 0);
+    }
+    _ ( enum_member _ )*
+    _ '}' ~ { _cap_ERROR("enum", "Expected closing '}'"); } {
+        _cap_ADDNODE(cap_ps_pop(auxil));
+        $$ = _cap_LASTNODE;
+    }
+enum_member <-
+    n:identifier
+    ( _ '=' _ v:expression ~ { _cap_ERROR("enum_member", "Expected expression after '='"); } )?
+    _ EOL ~ { _cap_ERROR("enum_member", "Expected EOL ';' after enum member"); } {
+        assert(auxil->stack->mark == ENUM_BODY);
+        struct cst_nEnum* en = auxil->stack->data;
+        en->members = realloc(en->members, (++en->member_count) * sizeof(struct cst_nEnum_Member*));
+        en->members[en->member_count-1] = malloc(sizeof(struct cst_nEnum_Member));
+        en->members[en->member_count-1]->name = n;
+        en->members[en->member_count-1]->val = v;
+    }
+
+struct <-
+    STRUCT_KW _ n:identifier ~ { _cap_ERROR("struct", "Expected identifier after 'struct'"); }
+    _ ( '<' _ b:identifier ~ { _cap_ERROR("struct", "Expected identifier after '<'"); }
+        _ '>' ~ { _cap_ERROR("struct", "Expected closing '>'"); } )?
+    _ '{' ~ { _cap_ERROR("struct", "Expected '{'"); }
+    {
+        cap_ps_push(auxil);
+        auxil->stack->mark = STRUCT_BODY;
+        auxil->stack->data = _cap_MKINITNODE(Struct, n, b, NULL, 0);
+    }
+    _ ( struct_member _ )*
+    _ '}' ~ { _cap_ERROR("struct", "Expected closing '}'"); } {
+        _cap_ADDNODE(cap_ps_pop(auxil));
+        $$ = _cap_LASTNODE;
+    }
+struct_member <-
+    t:type
+    _ n:identifier ~ { _cap_ERROR("struct_member", "Expected identifier after type"); }
+    ( _ '=' _ v:expression ~ { _cap_ERROR("struct_member", "Expected expression after '='"); } )?
+    _ EOL ~ { _cap_ERROR("struct_member", "Expected EOL ';' after struct member"); } {
+        assert(auxil->stack->mark == STRUCT_BODY);
+        struct cst_nStruct* st = auxil->stack->data;
+        st->members = realloc(st->members, (++st->member_count) * sizeof(struct cst_nStruct_Member*));
+        st->members[st->member_count-1] = malloc(sizeof(struct cst_nStruct_Member));
+        st->members[st->member_count-1]->type = t;
+        st->members[st->member_count-1]->name = n;
+        st->members[st->member_count-1]->val = v;
+    }

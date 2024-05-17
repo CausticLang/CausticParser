@@ -12,6 +12,8 @@ block_statement <-
   / s:for_stmt { $$ = s; }
   / s:while_stmt { $$ = s; }
   / s:proc_stmt { $$ = s; }
+  / s:enum { $$ = s; }
+  / s:struct { $$ = s; }
 
 illegal_stmt <-
     ELIF_KW { _cap_ERROR("statement", "Unexpected 'elif'"); }
