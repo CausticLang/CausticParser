@@ -24,7 +24,7 @@ line_inner <-
         cst_nBlock_addnode(auxil->stack->data, s);
     } / EOL {
         if (auxil->config.track_empty_lines)
-            _cap_ADDNODE(_cap_MKINITNODE(ExtraData, "blank_eol", NULL, true));
+            _cap_ADDNODE(_cap_MKINITNODE(ExtraData, "blank_eol:line_inner", NULL, true));
     }
 
 body <-

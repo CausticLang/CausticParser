@@ -1,7 +1,7 @@
 keyword <-
     TRUE_KW / FALSE_KW
   / PROC_KW / IF_KW / ELIF_KW / ELSE_KW / FOR_KW / WHILE_KW / DO_KW / PASS_KW / BREAK_KW / CONTINUE_KW
-  / ENUM_KW / STRUCT_KW / STRUCTENUM_KW
+  / ENUM_KW / STRUCT_KW / STRUCTENUM_KW / CLASS_KW / STATIC_KW
 
 TRUE_KW <- 'true'
 FALSE_KW <- 'false'
@@ -21,3 +21,4 @@ ENUM_KW <- 'enum'
 STRUCT_KW <- 'struct'
 STRUCTENUM_KW <- 'tunion'
 CLASS_KW <- 'class'
+STATIC_KW <- 'static'

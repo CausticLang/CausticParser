@@ -37,7 +37,7 @@ enum cap_ParserStackMark {
     NONE,
     BLOCK,
     INVOKE_ARGS, INVOKE_KWARGS, PROC_PARAMS,
-    ENUM_BODY, STRUCT_BODY, STRUCTENUM_BODY,
+    ENUM_BODY, STRUCT_BODY, STRUCTENUM_BODY, CLASS_BODY,
 };
 
 struct cap_ParserStack {

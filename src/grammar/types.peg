@@ -88,3 +88,72 @@ structenum_member <-
         es->members = realloc(es->members, (++es->member_count) * sizeof(cst_index));
         es->members[es->member_count-1] = s;
     }
+
+class <-
+    CLASS_KW _ n:identifier ~ { _cap_ERROR("class", "Expected identifier after 'class'"); }
+    _ ( '<' _ b:identifier ~ { _cap_ERROR("class", "Expected identifier after '<'"); }
+      _ '>' ~ { _cap_ERROR("class", "Expected closing '>'"); } )? {
+        cap_ps_push(auxil);
+        auxil->stack->mark = CLASS_BODY;
+        auxil->stack->data = _cap_MKINITNODE(Class, n, b, NULL, 0);
+    }
+    _ '{' ~ { _cap_ERROR("class", "Expected '{'"); }
+    _ ( class_member _ )*
+    _ '}' ~ { _cap_ERROR("class", "Expected closing '}'"); } {
+        _cap_ADDNODE(cap_ps_pop(auxil));
+        $$ = _cap_LASTNODE;
+    }
+
+class_member <-
+    STATIC_KW _ ( class_class_method / class_class_member ) ~ { _cap_ERROR("class_member", "Expected class member or procedure following 'static'"); }
+  / class_instance_method / class_instance_member
+  / EOL {
+        if (auxil->config.track_empty_lines)
+            _cap_ADDNODE(_cap_MKINITNODE(ExtraData, "blank_eol:class_member", NULL, true));
+    }
+
+class_instance_member <-
+    t:type _ n:identifier ~ { _cap_ERROR("class_instance_member", "Expected identifier"); }
+    ( _ '=' _ v:expression ~ { _cap_ERROR("class_instance_member", "Expected expression after '='"); } )?
+    _ EOL ~ { _cap_ERROR("class_instance_member", "Expected EOL ';' after class member"); } {
+        assert(auxil->stack->mark == CLASS_BODY);
+        struct cst_nClass* cls = auxil->stack->data;
+        cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
+        struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
+        m->is_static = false;
+        m->is_method = false;
+        struct cst_nStruct_Member* sm = m->member = malloc(sizeof(struct cst_nStruct_Member));
+        sm->type = t; sm->name = n; sm->val = v;
+    }
+class_class_member <-
+    t:type _ n:identifier ~ { _cap_ERROR("class_class_member", "Expected identifier"); }
+    ( _ '=' _ v:expression ~ { _cap_ERROR("class_class_member", "Expected expression after '='"); } )?
+    _ EOL ~ { _cap_ERROR("class_class_member", "Expected EOL ';' after class member"); } {
+        assert(auxil->stack->mark == CLASS_BODY);
+        struct cst_nClass* cls = auxil->stack->data;
+        cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
+        struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
+        m->is_static = true;
+        m->is_method = false;
+        struct cst_nStruct_Member* sm = m->member = malloc(sizeof(struct cst_nStruct_Member));
+        sm->type = t; sm->name = n; sm->val = v;
+    }
+
+class_instance_method <- p:proc_stmt {
+    assert(auxil->stack->mark = CLASS_BODY);
+    struct cst_nClass* cls = auxil->stack->data;
+    cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
+    struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
+    m->is_static = false;
+    m->is_method = true;
+    m->method = p;
+}
+class_class_method <- p:proc_stmt {
+    assert(auxil->stack->mark = CLASS_BODY);
+    struct cst_nClass* cls = auxil->stack->data;
+    cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
+    struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
+    m->is_static = true;
+    m->is_method = true;
+    m->method = p;
+}
