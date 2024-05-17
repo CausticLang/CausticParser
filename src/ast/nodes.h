@@ -2,11 +2,13 @@
 #define cst_NODES_GUARD 1
 
 #include <malloc.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
 
-typedef unsigned int cst_index;
+
+typedef uint16_t cst_index;
 
 enum cst_NodeType {
     // Control
