@@ -273,18 +273,18 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
         // Operations
         case UnaryOp:
             _cst_ALLOCNODE(UnaryOp);
-            cst_NODECAST(UnaryOp, node)->op = (enum cst_NodeType)fgetc(stream);
+            cst_NODECAST(UnaryOp, node)->op = (enum cst_OperatorType)fgetc(stream);
             cst_NODECAST(UnaryOp, node)->target = _cst_deserialize_index(stream);
             break;
         case BinaryOp:
             _cst_ALLOCNODE(BinaryOp);
-            cst_NODECAST(BinaryOp, node)->op = (enum cst_NodeType)fgetc(stream);
+            cst_NODECAST(BinaryOp, node)->op = (enum cst_OperatorType)fgetc(stream);
             cst_NODECAST(BinaryOp, node)->left = _cst_deserialize_index(stream);
             cst_NODECAST(BinaryOp, node)->right = _cst_deserialize_index(stream);
             break;
         case TernaryOp:
             _cst_ALLOCNODE(TernaryOp);
-            cst_NODECAST(TernaryOp, node)->op = (enum cst_NodeType)fgetc(stream);
+            cst_NODECAST(TernaryOp, node)->op = (enum cst_OperatorType)fgetc(stream);
             cst_NODECAST(TernaryOp, node)->a = _cst_deserialize_index(stream);
             cst_NODECAST(TernaryOp, node)->b = _cst_deserialize_index(stream);
             cst_NODECAST(TernaryOp, node)->c = _cst_deserialize_index(stream);
