@@ -162,7 +162,11 @@ postfix <-
   / n:invokation { $$ = n; }
 
 invokation <- n:invoke { $$ = n; }
-            / n:binding { $$ = n; }
+            / n:access { $$ = n; }
+
+access <- n:attr_access { $$ = n; }
+        / n:subscript_access { $$ = n; }
+        / n:binding { $$ = n; }
 
 binding <-
     '(' t:expression ')' ~ { _cap_ERROR("binding", "Expected closing ')'"); } { $$ = t; }

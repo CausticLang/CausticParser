@@ -24,6 +24,7 @@ _start <-
     _ n:block_inner { cst_NODECAST(Entrypoint, auxil->root->nodes[0])->node = n; }
     _ EOF ~ { _cap_ERROR("_start", "Expected EOF"); }
 
+%import "grammar/access.peg"
 %import "grammar/atoms.peg"
 %import "grammar/block.peg"
 %import "grammar/expression.peg"

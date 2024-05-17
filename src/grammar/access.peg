@@ -1,0 +1,12 @@
+attr_access <- t:binding '.' s:identifier ~ { _cap_ERROR("attr_access", "Expected identifier after '.'"); } {
+    _cap_ADDNODE(_cap_MKINITNODE(Attribute, t, s));
+    $$ = _cap_LASTNODE;
+}
+
+subscript_access <-
+    t:binding '['
+    s:expression ~ { _cap_ERROR("subscript_access", "Expected expression after '['"); }
+    ']' ~ { _cap_ERROR("subscript_access", "Expected closing ']'"); } {
+        _cap_ADDNODE(_cap_MKINITNODE(Subscript, t, s));
+        $$ = _cap_LASTNODE;
+    }
