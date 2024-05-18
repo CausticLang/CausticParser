@@ -41,6 +41,9 @@ _cst_GENSERIALIZE(sizet, sizets, size_t, uint16_t);
 _cst_GENSERIALIZE(index, indexes, cst_index, uint16_t);
 _cst_GENSERIALIZE(kwarg, kwargs, struct cst_ProcKwarg, struct cst_ProcKwarg);
 _cst_GENSERIALIZE(param, params, struct cst_ProcParam, struct cst_ProcParam);
+_cst_GENSERIALIZE(enum_member, enum_members, struct cst_nEnum_Member, struct cst_nEnum_Member);
+_cst_GENSERIALIZE(struct_member, struct_members, struct cst_nStruct_Member, struct cst_nStruct_Member);
+_cst_GENSERIALIZE(class_member, class_members, struct cst_nClass_Member, struct cst_nClass_Member);
 
 #undef _cst_GENSERIALIZE
 
@@ -79,6 +82,35 @@ void cst_nserialize_to(struct cst_NodeBase* node, FILE* stream) {
         case Type:
             _cst_serialize_index(cst_NODECAST(Type, node)->top, stream);
             _cst_serialize_index(cst_NODECAST(Type, node)->sub, stream);
+            break;
+        case Enum:
+            _cst_serialize_index(cst_NODECAST(Enum, node)->name, stream);
+            _cst_serialize_index(cst_NODECAST(Enum, node)->base, stream);
+            _cst_serialize_sizet(cst_NODECAST(Enum, node)->member_count, stream);
+            _cst_serialize_enum_members(cst_NODECAST(Enum, node)->members, cst_NODECAST(Enum, node)->member_count, stream);
+            break;
+        case Struct:
+            _cst_serialize_index(cst_NODECAST(Struct, node)->name, stream);
+            _cst_serialize_index(cst_NODECAST(Struct, node)->base, stream);
+            _cst_serialize_sizet(cst_NODECAST(Struct, node)->member_count, stream);
+            _cst_serialize_struct_members(cst_NODECAST(Struct, node)->members, cst_NODECAST(Struct, node)->member_count, stream);
+            break;
+        case StructEnum:
+            _cst_serialize_index(cst_NODECAST(StructEnum, node)->name, stream);
+            _cst_serialize_index(cst_NODECAST(StructEnum, node)->base, stream);
+            _cst_serialize_sizet(cst_NODECAST(StructEnum, node)->member_count, stream);
+            _cst_serialize_indexes(cst_NODECAST(StructEnum, node)->members, cst_NODECAST(StructEnum, node)->member_count, stream);
+        case Class:
+            _cst_serialize_index(cst_NODECAST(Class, node)->name, stream);
+            _cst_serialize_index(cst_NODECAST(Class, node)->base, stream);
+            _cst_serialize_sizet(cst_NODECAST(Class, node)->member_count, stream);
+            for (int i = 0; i < cst_NODECAST(Class, node)->member_count; i++) {
+                fputc((cst_NODECAST(Class, node)->members[i].is_static << 1) | cst_NODECAST(Class, node)->members[i].is_method, stream);
+                if (cst_NODECAST(Class, node)->members[i].is_method)
+                    _cst_serialize_index(cst_NODECAST(Class, node)->members[i].method, stream);
+                else
+                    _cst_serialize_struct_members((cst_NODECAST(Class, node)->members[i].member), 1, stream);
+            }
             break;
         // Atoms
         case Identifier:
@@ -271,6 +303,42 @@ struct cst_NodeBase* cst_ndeserialize_from(FILE* stream) {
             _cst_ALLOCNODE(Type);
             cst_NODECAST(Type, node)->top = _cst_deserialize_index(stream);
             cst_NODECAST(Type, node)->sub = _cst_deserialize_index(stream);
+            break;
+        case Enum:
+            _cst_ALLOCNODE(Enum);
+            cst_NODECAST(Enum, node)->name = _cst_deserialize_index(stream);
+            cst_NODECAST(Enum, node)->base = _cst_deserialize_index(stream);
+            size_t member_count = cst_NODECAST(Enum, node)->member_count = _cst_deserialize_sizet(stream);
+            cst_NODECAST(Enum, node)->members = _cst_deserialize_enum_members(member_count, stream);
+            break;
+        case Struct:
+            _cst_ALLOCNODE(Struct);
+            cst_NODECAST(Struct, node)->name = _cst_deserialize_index(stream);
+            cst_NODECAST(Struct, node)->base = _cst_deserialize_index(stream);
+            /*size_t (decl in `Enum:`)*/ member_count = cst_NODECAST(Struct, node)->member_count = _cst_deserialize_sizet(stream);
+            cst_NODECAST(Struct, node)->members = _cst_deserialize_struct_members(member_count, stream);
+            break;
+        case StructEnum:
+            _cst_ALLOCNODE(StructEnum);
+            cst_NODECAST(StructEnum, node)->name = _cst_deserialize_index(stream);
+            cst_NODECAST(StructEnum, node)->base = _cst_deserialize_index(stream);
+            /*size_t (decl in `Enum:`)*/ member_count = cst_NODECAST(StructEnum, node)->member_count = _cst_deserialize_sizet(stream);
+            cst_NODECAST(StructEnum, node)->members = _cst_deserialize_indexes(member_count, stream);
+            break;
+        case Class:
+            _cst_ALLOCNODE(Class);
+            cst_NODECAST(Class, node)->name = _cst_deserialize_index(stream);
+            cst_NODECAST(Class, node)->base = _cst_deserialize_index(stream);
+            /*size_t (decl in `Enum:`)*/ member_count = cst_NODECAST(Class, node)->member_count = _cst_deserialize_sizet(stream);
+            for (int i = 0; i < member_count; i++) {
+                char props = fgetc(stream);
+                cst_NODECAST(Class, node)->members[i].is_static = (bool)(props & 0b10);
+                cst_NODECAST(Class, node)->members[i].is_method = (bool)(props & 0b01);
+                if (props & 0b01)
+                    cst_NODECAST(Class, node)->members[i].method = _cst_deserialize_index(stream);
+                else
+                    cst_NODECAST(Class, node)->members[i].member = _cst_deserialize_struct_members(1, stream);
+            }
             break;
         // Atoms
         case Identifier:
