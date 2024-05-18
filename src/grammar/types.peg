@@ -29,10 +29,9 @@ enum_member <-
     _ EOL ~ { _cap_ERROR("enum_member", "Expected EOL ';' after enum member"); } {
         assert(auxil->stack->mark == ENUM_BODY);
         struct cst_nEnum* en = auxil->stack->data;
-        en->members = realloc(en->members, (++en->member_count) * sizeof(struct cst_nEnum_Member*));
-        en->members[en->member_count-1] = malloc(sizeof(struct cst_nEnum_Member));
-        en->members[en->member_count-1]->name = n;
-        en->members[en->member_count-1]->val = v;
+        en->members = realloc(en->members, (++en->member_count) * sizeof(struct cst_nEnum_Member));
+        en->members[en->member_count-1].name = n;
+        en->members[en->member_count-1].val = v;
     }
 
 struct <-
@@ -59,11 +58,10 @@ struct_member <-
     _ EOL ~ { _cap_ERROR("struct_member", "Expected EOL ';' after struct member"); } {
         assert(auxil->stack->mark == STRUCT_BODY);
         struct cst_nStruct* st = auxil->stack->data;
-        st->members = realloc(st->members, (++st->member_count) * sizeof(struct cst_nStruct_Member*));
-        st->members[st->member_count-1] = malloc(sizeof(struct cst_nStruct_Member));
-        st->members[st->member_count-1]->type = t;
-        st->members[st->member_count-1]->name = n;
-        st->members[st->member_count-1]->val = v;
+        st->members = realloc(st->members, (++st->member_count) * sizeof(struct cst_nStruct_Member));
+        st->members[st->member_count-1].type = t;
+        st->members[st->member_count-1].name = n;
+        st->members[st->member_count-1].val = v;
     }
 
 structenum <-
@@ -119,10 +117,9 @@ class_instance_member <-
         assert(auxil->stack->mark == CLASS_BODY);
         struct cst_nClass* cls = auxil->stack->data;
         cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
-        struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
-        m->is_static = false;
-        m->is_method = false;
-        struct cst_nStruct_Member* sm = m->member = malloc(sizeof(struct cst_nStruct_Member));
+        cls->members[cls->member_count-1].is_static = false;
+        cls->members[cls->member_count-1].is_method = false;
+        struct cst_nStruct_Member* sm = cls->members[cls->member_count-1].member = malloc(sizeof(struct cst_nStruct_Member));
         sm->type = t; sm->name = n; sm->val = v;
     }
 class_class_member <-
@@ -131,29 +128,26 @@ class_class_member <-
     _ EOL ~ { _cap_ERROR("class_class_member", "Expected EOL ';' after class member"); } {
         assert(auxil->stack->mark == CLASS_BODY);
         struct cst_nClass* cls = auxil->stack->data;
-        cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
-        struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
-        m->is_static = true;
-        m->is_method = false;
-        struct cst_nStruct_Member* sm = m->member = malloc(sizeof(struct cst_nStruct_Member));
+        cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member));
+        cls->members[cls->member_count-1].is_static = true;
+        cls->members[cls->member_count-1].is_method = false;
+        struct cst_nStruct_Member* sm = cls->members[cls->member_count-1].member = malloc(sizeof(struct cst_nStruct_Member));
         sm->type = t; sm->name = n; sm->val = v;
     }
 
 class_instance_method <- p:proc_stmt {
     assert(auxil->stack->mark = CLASS_BODY);
     struct cst_nClass* cls = auxil->stack->data;
-    cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
-    struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
-    m->is_static = false;
-    m->is_method = true;
-    m->method = p;
+    cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member));
+    cls->members[cls->member_count-1].is_static = false;
+    cls->members[cls->member_count-1].is_method = true;
+    cls->members[cls->member_count-1].method = p;
 }
 class_class_method <- p:proc_stmt {
     assert(auxil->stack->mark = CLASS_BODY);
     struct cst_nClass* cls = auxil->stack->data;
-    cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member*));
-    struct cst_nClass_Member* m = cls->members[cls->member_count-1] = malloc(sizeof(struct cst_nClass_Member));
-    m->is_static = true;
-    m->is_method = true;
-    m->method = p;
+    cls->members = realloc(cls->members, (++cls->member_count) * sizeof(struct cst_nClass_Member));
+    cls->members[cls->member_count-1].is_static = true;
+    cls->members[cls->member_count-1].is_method = true;
+    cls->members[cls->member_count-1].method = p;
 }

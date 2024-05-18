@@ -24,24 +24,18 @@ void cst_free_node(struct cst_NodeBase* node) {
             free(cst_NODECAST(Block, node)->nodes);
             break;
         case Enum:
-            for (int i = 0; i < cst_NODECAST(Enum, node)->member_count; i++)
-                free(cst_NODECAST(Enum, node)->members[i]);
             free(cst_NODECAST(Enum, node)->members);
             break;
         case Struct:
-            for (int i = 0; i < cst_NODECAST(Struct, node)->member_count; i++)
-                free(cst_NODECAST(Struct, node)->members[i]);
             free(cst_NODECAST(Struct, node)->members);
             break;
         case StructEnum:
             free(cst_NODECAST(StructEnum, node)->members);
             break;
         case Class:
-            for (int i = 0; i < cst_NODECAST(Class, node)->member_count; i++) {
-                if (!cst_NODECAST(Class, node)->members[i]->is_method)
-                    free(cst_NODECAST(Class, node)->members[i]->member);
-                free(cst_NODECAST(Class, node)->members[i]);
-            }
+            for (int i = 0; i < cst_NODECAST(Class, node)->member_count; i++)
+                if (!cst_NODECAST(Class, node)->members[i].is_method)
+                    free(cst_NODECAST(Class, node)->members[i].member);
             free(cst_NODECAST(Class, node)->members);
             break;
         _cst_FREEVAL(Identifier);

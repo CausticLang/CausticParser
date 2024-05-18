@@ -52,9 +52,9 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             printf("/members[nEnum_Member*]:%s", suffix);
             for (int i = 0; i < cst_NODECAST(Enum, node)->member_count; i++) {
                 _cst__NODEPRINTSUB(Enum, "members[nEnum_Member*]:");
-                printf("- name[noderef]: %u%s", cst_NODECAST(Enum, node)->members[i]->name, suffix);
+                printf("- name[noderef]: %u%s", cst_NODECAST(Enum, node)->members[i].name, suffix);
                 _cst__NODEPRINTSUB(Enum, "members[nEnum_Member*]:");
-                printf("  val[noderef]: %u%s", cst_NODECAST(Enum, node)->members[i]->val, suffix);
+                printf("  val[noderef]: %u%s", cst_NODECAST(Enum, node)->members[i].val, suffix);
             }
             break;
         case Struct:
@@ -65,11 +65,11 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             printf("/members[nStruct_Member*]:%s", suffix);
             for (int i = 0; i < cst_NODECAST(Struct, node)->member_count; i++) {
                 _cst__NODEPRINTSUB(Struct, "members[nStruct_Member*]:");
-                printf("- type[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i]->type, suffix);
+                printf("- type[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i].type, suffix);
                 _cst__NODEPRINTSUB(Struct, "members[nStruct_Member*]:");
-                printf("  name[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i]->name, suffix);
+                printf("  name[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i].name, suffix);
                 _cst__NODEPRINTSUB(Struct, "members[nStruct_Member*]:");
-                printf("  val[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i]->val, suffix);
+                printf("  val[noderef]: %u%s", cst_NODECAST(Struct, node)->members[i].val, suffix);
             }
             break;
         case StructEnum:
@@ -86,19 +86,19 @@ void cst_print_node(struct cst_NodeBase* node, char* prefix, char* suffix) {
             printf("/members[nClass_Member*]:%s", suffix);
             for (int i = 0; i < cst_NODECAST(Class, node)->member_count; i++) {
                 _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
-                printf("- is_method[bool]: %d%s", cst_NODECAST(Class, node)->members[i]->is_method, suffix);
+                printf("- is_method[bool]: %d%s", cst_NODECAST(Class, node)->members[i].is_method, suffix);
                 _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
-                printf("  is_static[bool]: %d%s", cst_NODECAST(Class, node)->members[i]->is_static, suffix);
+                printf("  is_static[bool]: %d%s", cst_NODECAST(Class, node)->members[i].is_static, suffix);
                 _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
-                if (cst_NODECAST(Class, node)->members[i]->is_method) {
-                    printf("  method[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->method, suffix);
+                if (cst_NODECAST(Class, node)->members[i].is_method) {
+                    printf("  method[noderef]: %u%s", cst_NODECAST(Class, node)->members[i].method, suffix);
                     continue;
                 }
-                printf("  member/type[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member->type, suffix);
+                printf("  member/type[noderef]: %u%s", cst_NODECAST(Class, node)->members[i].member->type, suffix);
                 _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
-                printf("  member/name[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member->name, suffix);
+                printf("  member/name[noderef]: %u%s", cst_NODECAST(Class, node)->members[i].member->name, suffix);
                 _cst__NODEPRINTSUB(Class, "members[nClass_Member*]:");
-                printf("  member/val[noderef]: %u%s", cst_NODECAST(Class, node)->members[i]->member->val, suffix);
+                printf("  member/val[noderef]: %u%s", cst_NODECAST(Class, node)->members[i].member->val, suffix);
             }
             break;
         // Atoms
