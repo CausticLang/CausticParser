@@ -1,0 +1,3 @@
+[submodule "src/ast"]
+	path = src/ast
+	url = git@codeberg.org:Caustic/CausticAST.git
