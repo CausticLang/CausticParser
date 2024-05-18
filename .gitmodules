@@ -1,3 +1,6 @@
 [submodule "src/ast"]
 	path = src/ast
 	url = git@codeberg.org:Caustic/CausticAST.git
+[submodule "src/grammar"]
+	path = src/grammar
+	url = git@codeberg.org:Caustic/CausticGrammar.git
