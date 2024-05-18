@@ -1,3 +1,3 @@
 #!/bin/bash
 
-packcc -l -I src/ -o parser src/parser.peg
+packcc -l -I src/ -o parser src/grammar/parser.peg

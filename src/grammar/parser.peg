@@ -3,20 +3,20 @@
 %value "cst_index"
 
 %header {
-    #include "src/parser_state.h"
-    //#include "src/error.h"
-    #include "src/ast/cst.h"
+    #include "parser_state.h"
+    //#include "error.h"
+    #include "ast/cst.h"
 
-    #include "src/grammar/helper.h"
+    #include "grammar/helper.h"
 
     #define PCC_AST_NODE_CUSTOM_DATA_DEFINED
     /*#define PCC_ERROR(auxil, event, rule, level, pos, buffer, length) \
         cap_debug(auxil, event, rule, level, pos, buffer, length);*/
 }
 %source {
-    #include "src/parser_state.c"
-    #include "src/error.h"
-    #include "src/ast/cst.c"
+    #include "parser_state.c"
+    #include "error.h"
+    #include "ast/cst.c"
 }
 
 _start <-
@@ -42,4 +42,4 @@ _start <-
 
 %%
 
-#include "src/error.c"
+#include "error.c"
