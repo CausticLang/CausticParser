@@ -11,6 +11,14 @@ from collections import abc as cabc
 #</Imports
 
 #> Header >/
+def deserialize_nodes(stream: typing.BinaryIO) -> cabc.Generator[typing.NamedTuple, None, None]:
+    while (c := stream.read(1)):
+        assert c == b'\1'
+        base = BaseNode.deserialize(stream)
+        if base.type.name not in globals():
+            raise NotImplementedError(f'Unhandled node type {base.type!r}')
+        yield globals()[base.type.name].deserialize(base, stream)
+
 def _deserialize_string(stream: typing.BinaryIO) -> cabc.Generator[bytes, None, None]:
     while (c := stream.read(1)) != b'\0': yield c
 def deserialize_string(stream: typing.BinaryIO) -> bytes:
