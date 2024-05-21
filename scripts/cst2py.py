@@ -484,13 +484,13 @@ class _Proc_Base:
     def _deserialize(stream: typing.BinaryIO) -> tuple[int, int, list[dict], int]:
         rtype = int.from_bytes(stream.read(2), byteorder='little')
         param_len = int.from_bytes(stream.read(2), byteorder='little')
-        return (rtype, param_len,
+        return (rtype,
                 [{'type': int.from_bytes(stream.read(2), byteorder='little'),
                   'name': int.from_bytes(stream.read(2), byteorder='little'),
                   'val': int.from_bytes(stream.read(2), byteorder='little'),
                   'has_default': bool.from_bytes(stream.read(1), byteorder='little'),
                   'param_type': ProcParamType.from_bytes(stream.read(2), byteorder='little')}
-                 for _ in range(param_len)], int.from_bytes(stream.read(2), byteorder='little'))
+                 for _ in range(param_len)], param_len, int.from_bytes(stream.read(2), byteorder='little'))
 class ProcExpr(typing.NamedTuple):
     base: BaseNode
     rtype: int
