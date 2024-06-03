@@ -10,9 +10,8 @@
 
 int main(void) {
     // Setup root
-    struct cst_Root* root = malloc(sizeof(struct cst_Root));
-    root->nodes = NULL;
-    root->node_count = 0;
+    cst_Root* root = malloc(sizeof(cst_Root));
+    *root = (cst_Root)cst_INITROOT;
     struct cap_ParserState* state = malloc(sizeof(struct cap_ParserState));
     state->root = root;
     state->config = (struct cap_ParserConfig)cap_DEFAULT_CONFIG;
@@ -20,18 +19,18 @@ int main(void) {
     state->stack = NULL;
     // Setup parser and parse
     cap_context_t* ctx = cap_create(state);
-    cst_index* primary;
-    cap_parse(ctx, primary);
+    cst_index entry;
+    int rval = cap_parse(ctx, &entry);
     // Print nodes
-    printf("Primary at index %d\n%d nodes\n", *primary, root->node_count);
-    for (int i = 0; i < root->node_count; i++) {
+    printf("cap_parse() rval: %d\nEntrypoint at index %u\n%u node(s)\n", rval, entry, root->n_nodes);
+    for (size_t i = 0; i < root->n_nodes; i++) {
         printf("Node@%d:\n", i);
-        cst_print_node(root->nodes[i], " ", "\n");
+        cst_print_node(stdout, root->nodes[i]);
     }
     // Cleanup
     cap_destroy(ctx);
     free(state);
-    for (int i = 0; i < root->node_count; i++) {
+    for (size_t i = 0; i < root->n_nodes; i++) {
         cst_free_node(root->nodes[i]);
         free(root->nodes[i]);
     }
