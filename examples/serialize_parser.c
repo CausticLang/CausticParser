@@ -6,13 +6,12 @@
 #include <malloc.h>
 
 #include "../parser.c"
-#include "../src/ast/serialize.c"
+#include "../src/ast/utils/serialize.c"
 
 int main(void) {
     // Setup root
-    struct cst_Root* root = malloc(sizeof(struct cst_Root));
-    root->nodes = NULL;
-    root->node_count = 0;
+    cst_Root* root = malloc(sizeof(cst_Root));
+    *root = (cst_Root)cst_INITROOT;
     struct cap_ParserState* state = malloc(sizeof(struct cap_ParserState));
     state->root = root;
     state->config = (struct cap_ParserConfig)cap_DEFAULT_CONFIG;
@@ -20,14 +19,14 @@ int main(void) {
     state->stack = NULL;
     // Setup parser and parse
     cap_context_t* ctx = cap_create(state);
-    cst_index* primary;
-    cap_parse(ctx, primary);
+    cst_index entry;
+    cap_parse(ctx, &entry);
     // Serialize nodes
-    cst_serialize_to(root, stdout);
+    cst_serialize_to(stdout, root);
     // Cleanup
     cap_destroy(ctx);
     free(state);
-    for (int i = 0; i < root->node_count; i++) {
+    for (int i = 0; i < root->n_nodes; i++) {
         cst_free_node(root->nodes[i]);
         free(root->nodes[i]);
     }
