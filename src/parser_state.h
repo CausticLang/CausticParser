@@ -1,7 +1,7 @@
 #ifndef cap_PARSER_STATE_H_GUARD
 #define cap_PARSER_STATE_H_GUARD 1
 
-#include "ast/cst.h"
+#include "ast/nodes.h"
 
 #include <stdbool.h>
 
@@ -27,7 +27,7 @@ struct cap_ParserLoc {
 }
 
 struct cap_ParserState {
-    struct cst_Root* root;
+    cst_Root* root;
     struct cap_ParserConfig config;
     struct cap_ParserLoc loc;
     struct cap_ParserStack* stack;
@@ -36,7 +36,7 @@ struct cap_ParserState {
 enum cap_ParserStackMark {
     NONE,
     BLOCK,
-    INVOKE_ARGS, INVOKE_KWARGS, PROC_PARAMS,
+    INVOKE_ARGS, INVOKE_KWARGS, PROC_STMT, PROC_EXPR, PROC_PARAMS,
     ENUM_BODY, STRUCT_BODY, STRUCTENUM_BODY, CLASS_BODY,
 };
 
