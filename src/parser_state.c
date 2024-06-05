@@ -17,11 +17,11 @@ struct cap_ParserStack* cap_ps_push(struct cap_ParserState* state) {
 }
 void* cap_ps_pop(struct cap_ParserState* state) {
     assert(state->stack != NULL);
-    void* nodes = state->stack->data;
+    void* data = state->stack->data;
     struct cap_ParserStack* cur = state->stack;
     state->stack = state->stack->prev;
     free(cur);
-    return nodes;
+    return data;
 }
 
 unsigned int cap_lno(struct cap_ParserState* state) {
