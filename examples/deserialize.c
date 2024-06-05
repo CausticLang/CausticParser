@@ -12,7 +12,7 @@ int main(void) {
     cst_Root* root = cst_deserialize_from(stdin);
     // Print nodes
     for (size_t i = 0; i < root->n_nodes; i++) {
-        printf("Node@%d:\n", i);
+        printf("Node@%zu:\n", i);
         cst_print_node(stdout, root->nodes[i]);
     }
     // Cleanup
