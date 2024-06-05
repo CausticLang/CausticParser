@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <malloc.h>
 
-#include "../parser.c"
+#include "../parser_nowarn.c"
 #include "../src/ast/utils/serialize.c"
 
 int main(void) {
