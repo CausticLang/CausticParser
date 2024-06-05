@@ -10,9 +10,9 @@
 
 int main(void) {
     // Setup root
-    cst_Root* root = malloc(sizeof(cst_Root));
+    cst_Root* root = (cst_Root*)malloc(sizeof(cst_Root));
     *root = (cst_Root)cst_INITROOT;
-    struct cap_ParserState* state = malloc(sizeof(struct cap_ParserState));
+    struct cap_ParserState* state = (struct cap_ParserState*)malloc(sizeof(struct cap_ParserState));
     state->root = root;
     state->config = (struct cap_ParserConfig)cap_DEFAULT_CONFIG;
     state->loc = (struct cap_ParserLoc)cap_DEFAULT_LOC;

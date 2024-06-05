@@ -8,7 +8,7 @@
 
 struct cap_ParserStack* cap_ps_push(struct cap_ParserState* state) {
     struct cap_ParserStack* prev = state->stack;
-    state->stack = malloc(sizeof(struct cap_ParserStack));
+    state->stack = (struct cap_ParserStack*)malloc(sizeof(struct cap_ParserStack));
     state->stack->prev = prev;
     state->stack->data = NULL;
     state->stack->auxcount = 0;
