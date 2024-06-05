@@ -26,7 +26,7 @@ int main(void) {
     // Cleanup
     cap_destroy(ctx);
     free(state);
-    for (int i = 0; i < root->n_nodes; i++) {
+    for (size_t i = 0; i < root->n_nodes; i++) {
         cst_free_node(root->nodes[i]);
         free(root->nodes[i]);
     }
